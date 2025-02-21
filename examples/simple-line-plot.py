@@ -8,7 +8,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-with PlotEnvironment(font_path='fonts/gillsans.ttf'):
+with PlotEnvironment(font_path='../fonts/gillsans.ttf'):
     df = pd.DataFrame({
         "x": [0, 1, 2, 3, 4],
         "y": [0, 2, 1, 3, 4],
@@ -22,4 +22,4 @@ with PlotEnvironment(font_path='fonts/gillsans.ttf'):
 
     # Use .show or .save to output the figure
     # simple_line.show()
-    simple_line.save('output/simple-line-plot.png')
+    simple_line.save('output/simple-line-plot.pdf', format='pdf')

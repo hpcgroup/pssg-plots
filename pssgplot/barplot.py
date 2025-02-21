@@ -169,8 +169,8 @@ class BarPlot(Plot):
         # check if save_dir exists; if not, create it; if it does, error if it's not empty
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
-        elif os.listdir(save_dir):
-            raise ValueError(f"Directory {save_dir} is not empty.")
+        #elif os.listdir(save_dir):
+        #    raise ValueError(f"Directory {save_dir} is not empty.")
 
         # save each frame as frame_format; and also save a gif
         for i in range(frames):

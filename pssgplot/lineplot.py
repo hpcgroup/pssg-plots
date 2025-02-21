@@ -136,8 +136,8 @@ class LinePlot(Plot):
         # Ensure output directory exists and is empty
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
-        elif os.listdir(save_dir):
-            raise ValueError(f"Directory {save_dir} is not empty.")
+        #elif os.listdir(save_dir):
+        #    raise ValueError(f"Directory {save_dir} is not empty.")
 
         if by == 'column':
             # Determine maximum number of data points among all lines

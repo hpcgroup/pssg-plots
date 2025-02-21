@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 
-with PlotEnvironment(font_path='fonts/gillsans.ttf'):
+with PlotEnvironment(font_path='../fonts/gillsans.ttf'):
     df = pd.DataFrame({
         "x": ["A", "B", "C", "D"],
         "y": [1, 2, 3, 4],
@@ -22,4 +22,4 @@ with PlotEnvironment(font_path='fonts/gillsans.ttf'):
 
     # use .show or .save to output the figure
     #simple_bars.show()
-    simple_bars.save('output/simple-bar-chart.png')
+    simple_bars.save('output/simple-bar-chart.pdf', format='pdf')
