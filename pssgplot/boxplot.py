@@ -118,7 +118,7 @@ class BoxPlot(Plot):
                 )
 
         if hatch:
-            hatches = hatches or ['x', 'xxx', '\\\\', '||','///', '+', 'o', '.', '*', '-', 'ooo', '+++', '...', '---',  'xx', '++']
+            hatches = hatches or ['x', 'xxx', '\\\\', '||', '///', '+', 'o', '.', '*', '-', 'ooo', '+++', '...', '---',  'xx', '++']
             
             if 'hue' in kwargs:
                 n_groups = len(data[kwargs['hue']].unique())
