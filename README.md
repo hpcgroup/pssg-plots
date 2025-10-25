@@ -6,13 +6,13 @@ A lightweight Python plotting library for creating plots in the PSSG style.
 
 ## Simple Bar Chart Demo
 
-Aquick demo of plotting a simple bar chart:
+A quick demo of plotting a simple bar chart:
 
 ```python
 from pssgplot import PlotEnvironment, BarPlot
 import pandas as pd
 
-with PlotEnvironment(font_path='fonts/gillsans.ttf'):
+with PlotEnvironment():
     df = pd.DataFrame({
         "x": ["A", "B", "C", "D"],
         "y": [1, 2, 3, 4],
@@ -26,6 +26,21 @@ with PlotEnvironment(font_path='fonts/gillsans.ttf'):
     
     chart.save('output/simple-bar-chart.png')
 ```
+
+## Installing and Setup
+
+Setting up with _uv_ is straightforward:
+
+```bash
+uv venv
+source .venv/bin/activate
+
+uv pip install -e pssg-plots/
+
+uv run plotting-script.py
+```
+
+You can also just use vanilla pip and virtualenvs if you'd like.
 
 ## Examples
 
