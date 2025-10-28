@@ -25,7 +25,6 @@ class LinePlot(Plot):
         data: pd.DataFrame,
         x: str,
         y: str,
-        markers: bool = True,
         title: Optional[str] = None,
         title_fontsize: Optional[int] = None,
         xlabel: Optional[str] = None,
@@ -56,7 +55,7 @@ class LinePlot(Plot):
 
         self.fig = plt.figure(figsize=figsize)
         # Create a lineplot using seaborn
-        self.ax = sns.lineplot(data=data, x=x, y=y, ax=ax, marker='o' if markers else None, **kwargs)
+        self.ax = sns.lineplot(data=data, x=x, y=y, ax=ax, **kwargs)
 
         if title is not None:
             self.ax.set_title(title, fontsize=title_fontsize)
@@ -68,10 +67,10 @@ class LinePlot(Plot):
             self.ax.set_ylabel(ylabel, fontsize=ylabel_fontsize)
 
         if logx is not None:
-            self.ax.set_xscale('log', basex=logx)
+            self.ax.set_xscale('log', base=logx)
 
         if logy is not None:
-            self.ax.set_yscale('log', basey=logy)
+            self.ax.set_yscale('log', base=logy)
 
         if xlim is not None:
             self.ax.set_xlim(xlim)

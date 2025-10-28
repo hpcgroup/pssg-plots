@@ -13,6 +13,28 @@ import seaborn as sns
 INTERACTIVE_BACKENDS = ['tkagg', 'qt5agg', 'qt6agg']
 
 
+def get_colors():
+    return ["#FD8A8A", "#A8D1D1", "#9EA1D4", "#FFCBCB", "#DFEBEB", "#F1F7B5"]
+
+
+def get_darker_colors():
+    # Return darker tones of the colors in get_colors()
+    return ["#E03A3D", "#0072B2", "#643B9F", "#D55E00", "#009E73", "#CC79A7"]
+
+
+def get_alt_colors():
+    return [
+        "#D55E00",
+        "#009E73",
+        "#0072B2",
+        "#CC79A7",
+        "#000000",
+        "#E03A3D",
+        "#F0E442",
+    ]
+
+
+
 class PlotEnvironment:
     """ PSSG plot environment.
     """
