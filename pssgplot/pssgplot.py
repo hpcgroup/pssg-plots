@@ -2,7 +2,9 @@
 """
 # std imports
 from os import PathLike
+from pathlib import Path
 from typing import List, Optional, Union
+import warnings
 
 # tpl imports
 from matplotlib.font_manager import FontProperties, fontManager
@@ -50,12 +52,8 @@ class PlotEnvironment:
         """
         if interactive and backend is not None:
             raise ValueError("interactive and backend cannot both be specified.")
-
-        if font_name is not None and font_path is not None:
-            raise ValueError("Only one of font_name and font_path may be specified.")
         
-        if font_path is not None:
-            font_name = self._load_font(font_path)
+        font_name = self._resolve_font(font_name, font_path)
 
         if font_scale <= 0:
             raise ValueError("font_scale must be positive.")
@@ -104,3 +102,39 @@ class PlotEnvironment:
         """ load a font into matplotlib and return its name """
         fontManager.addfont(font_path)
         return FontProperties(fname=font_path).get_name()
+
+    def _resolve_font(self, font_name: Optional[str], font_path: Optional[str]) -> str:
+        """ Resolves the font to use for plotting.
+            If neither font_name nor font_path is specified, look for the Gill Sans MT or Gill Sans font packaged with this library.
+                If it is not found, look for a systems Gill Sans or Gill Sans MT font. If it is still not found, print a warning and use the default font.
+            If font_name is specified, use it.
+            If font_path is specified, load the font from the path and use it.
+            If both are specified, raise an error.
+        """
+        if font_name is not None and font_path is not None:
+            raise ValueError("Only one of font_name and font_path may be specified.")
+
+        if font_path is not None:
+            return self._load_font(font_path)
+        
+        if font_name is not None:
+            return font_name
+        
+        # Use bundled Gill Sans font if available
+        bundled_font_path = Path(__file__).parent.parent / "fonts" / "gillsans.ttf"
+        if bundled_font_path.exists():
+            return self._load_font(bundled_font_path)
+        
+        # Look for system Gill Sans or Gill Sans MT fonts
+        available_fonts = [f.name for f in fontManager.ttflist]
+        for font_candidate in ['Gill Sans MT', 'Gill Sans', 'GillSans']:
+            if font_candidate in available_fonts:
+                return font_candidate
+        
+        # Fall back to default font with warning
+        warnings.warn(
+            "Gill Sans font not found. Using default sans-serif font. "
+            "For best results, install Gill Sans or specify a custom font.",
+            UserWarning
+        )
+        return "sans-serif"
