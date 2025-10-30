@@ -83,8 +83,8 @@ class PlotEnvironment:
             context={
                 'axes.spines.right': False,
                 'axes.spines.top': False,
-                'lines.linewidth': 2, 
-                'lines.markersize': 8,
+                'lines.linewidth': 1,
+                'lines.markersize': 6,
                 'font.family': self._font_name,
             }
         )
