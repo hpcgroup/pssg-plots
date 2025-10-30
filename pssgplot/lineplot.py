@@ -4,7 +4,6 @@ from matplotlib.axes import Axes
 import pandas as pd
 import seaborn as sns
 from pssgplot import Plot
-from matplotlib.ticker import FixedLocator
 
 """ Wrapper function to plot a line plot.
 """
@@ -47,7 +46,6 @@ class LinePlot(Plot):
         ax: Optional[Axes] = None,
         figsize: Tuple[float, float] = (5, 3),
         tight_layout: bool = True,
-        only_specified_xticks = True,
         **kwargs,
     ) -> Axes:
 
@@ -59,34 +57,6 @@ class LinePlot(Plot):
         self.fig = plt.figure(figsize=figsize)
         # Create a lineplot using seaborn
         self.ax = sns.lineplot(data=data, x=x, y=y, ax=ax, marker='o' if markers else None, **kwargs)
-
-        if markers:
-            marker_sequence = ['o', 'x', 's', '^']
-            dash_sequence   = ['-', '--', '-.', ':']
-            for idx, line in enumerate(self.ax.get_lines()):
-                marker_style = marker_sequence[idx % len(marker_sequence)]
-                dash_style = dash_sequence[idx % len(dash_sequence)]
-                line.set_marker(marker_style)
-                line.set_linestyle(dash_style)
-                line.set_markerfacecolor('white')
-                line.set_markeredgecolor(line.get_color())
-                line.set_markeredgewidth(line.get_linewidth())
-                #line.set_clip_on(False)
-
-        self.ax.tick_params(axis='both', direction='in')
-
-        self.ax.set_xlim(left=0)
-        self.ax.set_ylim(bottom=0)
-        self.fig.canvas.draw()
-        xt = self.ax.get_xticks()
-        yt = self.ax.get_yticks()
-        self.ax.set_xlim(0, xt[-1])
-        self.ax.set_ylim(0, yt[-1])
-        if only_specified_xticks:
-            xvals = pd.Series(self.data[self.x]).drop_duplicates().sort_values().to_numpy()
-            self.ax.xaxis.set_major_locator(FixedLocator(xvals))
-            self.ax.set_xlim(xvals.min(), xvals.max())
-            self.ax.margins(x=0)
 
         if title is not None:
             self.ax.set_title(title, fontsize=title_fontsize)
@@ -109,9 +79,6 @@ class LinePlot(Plot):
         if ylim is not None:
             self.ax.set_ylim(ylim)
 
-        if "errorbar" not in kwargs:
-            kwargs["errorbar"] = None
-
         if error is not None:
             if error not in data.columns:
                 raise ValueError(f"Column {error} not in data.")
@@ -128,10 +95,9 @@ class LinePlot(Plot):
             )
 
         if legend:
-            legend_ncol = legend_ncol if (legend_ncol is not None) else 1
             self.ax.legend(loc=legend_loc, bbox_to_anchor=legend_bbox, fontsize=legend_fontsize, ncol=legend_ncol, title=legend_title)
 
-        self.ax.yaxis.grid(linestyle='dotted', zorder=0)
+        self.ax.yaxis.grid(linestyle='dashed', zorder=0)
         self.ax.spines['left'].set_color('#606060')
         self.ax.spines['bottom'].set_color('#606060')
 
