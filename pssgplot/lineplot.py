@@ -1,6 +1,7 @@
 from typing import Optional, Tuple
 import os
 from matplotlib.ticker import AutoMinorLocator, MaxNLocator
+from matplotlib.markers import MarkerStyle
 from matplotlib.axes import Axes
 import pandas as pd
 from pandas.api.types import is_numeric_dtype
@@ -112,9 +113,9 @@ class LinePlot(Plot):
 
         self.ax.tick_params(axis='both', which='both', direction='in')
         self.ax.yaxis.grid(
-            linestyle=(0, (0.4, 2.2)),
+            linestyle=(0, (0.5, 2.4)),
             color='#B0B0B0',
-            linewidth=0.5,
+            linewidth=0.6,
             dash_capstyle='round',
             zorder=0,
         )
@@ -135,23 +136,34 @@ class LinePlot(Plot):
                 proxy_lines.append(line)
 
         if len(data_lines) > 1:
-            dash_patterns = [
-                (4, 2),
-                (2, 2),
-                (6, 2, 2, 2),
-                (3, 1, 1, 1),
-                (8, 2),
-                (5, 2, 1, 2),
+            base_dash_patterns = [
+                (4, 2.5),  # orange
+                (6, 2, 1, 2, 1, 2),  # green
+                (6, 2, 2, 2),  # blue
             ]
-            marker_cycle = ['o', 's', '^', 'D', 'v', 'P', 'X']
+            base_markers = ['o', 'x', 's']
+            extra_dash_pattern = (1, 1)
+            extra_marker = '^'
+            def _make_marker(marker_name):
+                if marker_name == 'x':
+                    return MarkerStyle(marker_name, capstyle='round', joinstyle='round')
+                if marker_name == 's':
+                    return MarkerStyle(marker_name, joinstyle='round')
+                return marker_name
             styles_by_index = []
             styles_by_color = {}
             for idx, line in enumerate(data_lines):
-                dash = dash_patterns[idx % len(dash_patterns)]
-                marker = marker_cycle[idx % len(marker_cycle)]
+                if idx < len(base_dash_patterns):
+                    dash = base_dash_patterns[idx]
+                    marker = base_markers[idx]
+                else:
+                    dash = extra_dash_pattern
+                    marker = extra_marker
+                    line.set_color('black')
                 line.set_dashes(dash)
+                line.set_dash_capstyle('round')
                 if markers:
-                    line.set_marker(marker)
+                    line.set_marker(_make_marker(marker))
                 line.set_linewidth(1.4)
                 styles_by_index.append((dash, marker))
                 styles_by_color.setdefault(line.get_color(), (dash, marker))
@@ -163,20 +175,29 @@ class LinePlot(Plot):
                 if dash_marker is not None:
                     dash, marker = dash_marker
                     line.set_dashes(dash)
+                    line.set_dash_capstyle('round')
                     if markers:
-                        line.set_marker(marker)
+                        line.set_marker(_make_marker(marker))
                     line.set_linewidth(1.4)
 
         if markers:
             facecolor = self.ax.get_facecolor()
             for line in lines:
-                if line.get_marker() not in (None, 'None', ''):
-                    line.set_markerfacecolor(facecolor)
+                marker_value = line.get_marker()
+                if isinstance(marker_value, MarkerStyle):
+                    marker_name = marker_value.get_marker()
+                else:
+                    marker_name = marker_value
+                if marker_name not in (None, 'None', ''):
+                    if marker_name == 'x':
+                        line.set_markerfacecolor('none')
+                    else:
+                        line.set_markerfacecolor(facecolor)
                     line.set_markeredgecolor(line.get_color())
                     line.set_markeredgewidth(1.2)
 
         if legend_kwargs is not None:
-            legend_kwargs.setdefault("handlelength", 2.8)
+            legend_kwargs.setdefault("handlelength", 3.2)
             self.ax.legend(**legend_kwargs)
 
         def _set_linear_limits(series, set_lim, set_locator):

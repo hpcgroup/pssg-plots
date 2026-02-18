@@ -113,9 +113,9 @@ class BarPlot(Plot):
 
         self.ax.tick_params(axis='both', which='both', direction='in')
         self.ax.yaxis.grid(
-            linestyle=(0, (0.4, 2.2)),
+            linestyle=(0, (0.5, 2.4)),
             color='#B0B0B0',
-            linewidth=0.5,
+            linewidth=0.6,
             dash_capstyle='round',
             zorder=0,
         )
