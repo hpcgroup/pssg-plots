@@ -111,7 +111,7 @@ class LinePlot(Plot):
             if legend_title is not None:
                 legend_kwargs["title"] = legend_title
 
-        self.ax.tick_params(axis='both', which='both', direction='in')
+        self.ax.tick_params(axis='both', which='both', direction='in', colors='#606060', labelcolor='#606060')
         self.ax.yaxis.grid(
             linestyle=(0, (0.5, 2.4)),
             color='#B0B0B0',
