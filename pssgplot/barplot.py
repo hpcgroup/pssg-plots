@@ -6,9 +6,11 @@ import os
 
 # tpl imports
 import matplotlib.pyplot as plt
+from matplotlib.ticker import AutoMinorLocator, MaxNLocator
 from matplotlib.axes import Axes
 import matplotlib.animation as animation
 import pandas as pd
+from pandas.api.types import is_numeric_dtype
 import seaborn as sns
 
 # local imports
@@ -95,10 +97,33 @@ class BarPlot(Plot):
             )
 
         if legend:
-            self.ax.legend(loc=legend_loc, bbox_to_anchor=legend_bbox, fontsize=legend_fontsize, ncol=legend_ncol, title=legend_title)
+            legend_kwargs = {}
+            if legend_loc is not None:
+                legend_kwargs["loc"] = legend_loc
+            if legend_bbox is not None:
+                legend_kwargs["bbox_to_anchor"] = legend_bbox
+            if legend_fontsize is not None:
+                legend_kwargs["fontsize"] = legend_fontsize
+            if legend_ncol is not None:
+                legend_kwargs["ncol"] = legend_ncol
+            if legend_title is not None:
+                legend_kwargs["title"] = legend_title
+            self.ax.legend(**legend_kwargs)
             
 
+        self.ax.tick_params(axis='both', which='both', direction='in')
         self.ax.yaxis.grid(linestyle='dashed', zorder=0)
+        if logy is None:
+            self.ax.yaxis.set_minor_locator(AutoMinorLocator(2))
+            self.ax.grid(
+                axis='y',
+                which='minor',
+                linestyle=':',
+                color='#B0B0B0',
+                linewidth=0.6,
+                alpha=0.6,
+                zorder=0,
+            )
         self.ax.spines['left'].set_color('#606060')
         self.ax.spines['bottom'].set_color('#606060')
 
@@ -134,6 +159,26 @@ class BarPlot(Plot):
                 for i, p in enumerate(self.ax.get_legend().get_patches()):
                     p.set_hatch(hatches[i % n_groups])
                     p.set_edgecolor('k')
+
+        def _set_linear_limits(series, set_lim, set_locator):
+            data_max = series.max()
+            if pd.isna(data_max):
+                return
+            locator = MaxNLocator(nbins='auto', min_n_ticks=4)
+            ticks = locator.tick_values(0, data_max)
+            if len(ticks) == 0:
+                return
+            upper = ticks[-1]
+            if upper == 0:
+                upper = 1
+            set_locator(locator)
+            set_lim(0, upper)
+
+        if xlim is None and logx is None and is_numeric_dtype(data[x]):
+            _set_linear_limits(data[x], self.ax.set_xlim, self.ax.xaxis.set_major_locator)
+
+        if ylim is None and logy is None and is_numeric_dtype(data[y]):
+            _set_linear_limits(data[y], self.ax.set_ylim, self.ax.yaxis.set_major_locator)
 
         if tight_layout:
             self.fig.tight_layout()
