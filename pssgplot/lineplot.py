@@ -111,18 +111,13 @@ class LinePlot(Plot):
                 legend_kwargs["title"] = legend_title
 
         self.ax.tick_params(axis='both', which='both', direction='in')
-        self.ax.yaxis.grid(linestyle='dashed', zorder=0)
-        if logy is None:
-            self.ax.yaxis.set_minor_locator(AutoMinorLocator(2))
-            self.ax.grid(
-                axis='y',
-                which='minor',
-                linestyle=':',
-                color='#B0B0B0',
-                linewidth=0.6,
-                alpha=0.6,
-                zorder=0,
-            )
+        self.ax.yaxis.grid(
+            linestyle=(0, (0.4, 2.2)),
+            color='#B0B0B0',
+            linewidth=0.5,
+            dash_capstyle='round',
+            zorder=0,
+        )
         self.ax.spines['left'].set_color('#606060')
         self.ax.spines['bottom'].set_color('#606060')
 
@@ -157,6 +152,7 @@ class LinePlot(Plot):
                 line.set_dashes(dash)
                 if markers:
                     line.set_marker(marker)
+                line.set_linewidth(1.4)
                 styles_by_index.append((dash, marker))
                 styles_by_color.setdefault(line.get_color(), (dash, marker))
 
@@ -169,6 +165,7 @@ class LinePlot(Plot):
                     line.set_dashes(dash)
                     if markers:
                         line.set_marker(marker)
+                    line.set_linewidth(1.4)
 
         if markers:
             facecolor = self.ax.get_facecolor()
@@ -176,9 +173,10 @@ class LinePlot(Plot):
                 if line.get_marker() not in (None, 'None', ''):
                     line.set_markerfacecolor(facecolor)
                     line.set_markeredgecolor(line.get_color())
-                    line.set_markeredgewidth(1.8)
+                    line.set_markeredgewidth(1.2)
 
         if legend_kwargs is not None:
+            legend_kwargs.setdefault("handlelength", 2.8)
             self.ax.legend(**legend_kwargs)
 
         def _set_linear_limits(series, set_lim, set_locator):

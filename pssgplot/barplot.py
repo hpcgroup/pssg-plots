@@ -112,18 +112,13 @@ class BarPlot(Plot):
             
 
         self.ax.tick_params(axis='both', which='both', direction='in')
-        self.ax.yaxis.grid(linestyle='dashed', zorder=0)
-        if logy is None:
-            self.ax.yaxis.set_minor_locator(AutoMinorLocator(2))
-            self.ax.grid(
-                axis='y',
-                which='minor',
-                linestyle=':',
-                color='#B0B0B0',
-                linewidth=0.6,
-                alpha=0.6,
-                zorder=0,
-            )
+        self.ax.yaxis.grid(
+            linestyle=(0, (0.4, 2.2)),
+            color='#B0B0B0',
+            linewidth=0.5,
+            dash_capstyle='round',
+            zorder=0,
+        )
         self.ax.spines['left'].set_color('#606060')
         self.ax.spines['bottom'].set_color('#606060')
 
