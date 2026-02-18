@@ -1,7 +1,9 @@
 from typing import Optional, Tuple
 import os
 import math
+import matplotlib as mpl
 from matplotlib.markers import MarkerStyle
+from matplotlib.lines import Line2D
 from matplotlib.axes import Axes
 import pandas as pd
 from pandas.api.types import is_numeric_dtype
@@ -111,14 +113,31 @@ class LinePlot(Plot):
             if legend_title is not None:
                 legend_kwargs["title"] = legend_title
 
-        self.ax.tick_params(axis='both', which='both', direction='in', colors='#606060', labelcolor='#606060')
+        tick_color = '#606060'
+        tick_width = 0.8
+        self.ax.tick_params(
+            axis='both',
+            which='both',
+            direction='in',
+            colors=tick_color,
+            labelcolor=tick_color,
+            width=tick_width,
+            length=0,
+        )
         self.ax.yaxis.grid(
             linestyle=(0, (0.5, 2.4)),
-            color='#B0B0B0',
-            linewidth=0.6,
+            color=tick_color,
+            linewidth=tick_width,
             dash_capstyle='round',
             zorder=0,
         )
+        for gridline in self.ax.get_ygridlines():
+            gridline.set_clip_on(False)
+        if not hasattr(self, "_custom_tick_lines"):
+            self._custom_tick_lines = []
+        for line in self._custom_tick_lines:
+            line.remove()
+        self._custom_tick_lines = []
         self.ax.spines['left'].set_color('#606060')
         self.ax.spines['bottom'].set_color('#606060')
 
@@ -249,6 +268,44 @@ class LinePlot(Plot):
 
         if tight_layout:
             self.fig.tight_layout()
+
+        fig = self.ax.figure
+        fig.canvas.draw()
+        bbox = self.ax.get_window_extent()
+        xtick_len = mpl.rcParams['xtick.major.size']
+        ytick_len = mpl.rcParams['ytick.major.size']
+        xtick_len_ax = (xtick_len * fig.dpi / 72.0) / bbox.height
+        ytick_len_ax = (ytick_len * fig.dpi / 72.0) / bbox.width
+        x_offset = (tick_width * fig.dpi / 72.0) / bbox.height / 2.0
+        y_offset = (tick_width * fig.dpi / 72.0) / bbox.width / 2.0
+
+        for x_tick in self.ax.get_xticks():
+            line = Line2D(
+                [x_tick, x_tick],
+                [x_offset, x_offset + xtick_len_ax],
+                transform=self.ax.get_xaxis_transform(),
+                color=tick_color,
+                linewidth=tick_width,
+                solid_capstyle='round',
+                zorder=3,
+                clip_on=False,
+            )
+            self.ax.add_line(line)
+            self._custom_tick_lines.append(line)
+
+        for y_tick in self.ax.get_yticks():
+            line = Line2D(
+                [y_offset, y_offset + ytick_len_ax],
+                [y_tick, y_tick],
+                transform=self.ax.get_yaxis_transform(),
+                color=tick_color,
+                linewidth=tick_width,
+                solid_capstyle='round',
+                zorder=3,
+                clip_on=False,
+            )
+            self.ax.add_line(line)
+            self._custom_tick_lines.append(line)
 
         if legend_title is not None and self.ax.get_legend():
             self.ax.get_legend().set_title(legend_title)
