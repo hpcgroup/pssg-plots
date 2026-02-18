@@ -1,6 +1,6 @@
 from typing import Optional, Tuple
 import os
-from matplotlib.ticker import AutoMinorLocator, MaxNLocator
+import math
 from matplotlib.markers import MarkerStyle
 from matplotlib.axes import Axes
 import pandas as pd
@@ -200,25 +200,52 @@ class LinePlot(Plot):
             legend_kwargs.setdefault("handlelength", 3.2)
             self.ax.legend(**legend_kwargs)
 
-        def _set_linear_limits(series, set_lim, set_locator):
+        def _nice_num(value, round_to):
+            if value == 0:
+                return 1
+            exponent = math.floor(math.log10(value))
+            fraction = value / (10 ** exponent)
+            if round_to:
+                if fraction < 1.5:
+                    nice_fraction = 1
+                elif fraction < 3:
+                    nice_fraction = 2
+                elif fraction < 7:
+                    nice_fraction = 5
+                else:
+                    nice_fraction = 10
+            else:
+                if fraction <= 1:
+                    nice_fraction = 1
+                elif fraction <= 2:
+                    nice_fraction = 2
+                elif fraction <= 5:
+                    nice_fraction = 5
+                else:
+                    nice_fraction = 10
+            return nice_fraction * (10 ** exponent)
+
+        def _set_linear_limits(series, axis, set_lim):
             data_max = series.max()
             if pd.isna(data_max):
                 return
-            locator = MaxNLocator(nbins='auto', min_n_ticks=4)
-            ticks = locator.tick_values(0, data_max)
-            if len(ticks) == 0:
-                return
-            upper = ticks[-1]
-            if upper == 0:
+            if data_max <= 0:
+                step = 1
                 upper = 1
-            set_locator(locator)
+            else:
+                desired_ticks = 6
+                step = _nice_num(data_max / (desired_ticks - 1), True)
+                upper = math.ceil(data_max / step) * step
             set_lim(0, upper)
+            n = int(round(upper / step))
+            ticks = [i * step for i in range(n + 1)]
+            axis.set_ticks(ticks)
 
         if xlim is None and logx is None and is_numeric_dtype(data[x]):
-            _set_linear_limits(data[x], self.ax.set_xlim, self.ax.xaxis.set_major_locator)
+            _set_linear_limits(data[x], self.ax.xaxis, self.ax.set_xlim)
 
         if ylim is None and logy is None and is_numeric_dtype(data[y]):
-            _set_linear_limits(data[y], self.ax.set_ylim, self.ax.yaxis.set_major_locator)
+            _set_linear_limits(data[y], self.ax.yaxis, self.ax.set_ylim)
 
         if tight_layout:
             self.fig.tight_layout()
