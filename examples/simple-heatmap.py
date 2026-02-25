@@ -18,10 +18,10 @@ with PlotEnvironment(font_path='../fonts/gillsans.ttf'):
                   0.5,0.3,0.1,0.2,
                   1.2,1.05,1.6,2.1]
     })
-    bounds = [0.25, 0.5, 0.9, 1.1, 1.5, 2.0]
     hm = Heatmap()
     hm.plot(
         data=df,
+        row="x",
         row="x",
         col="y",
         value="value",
