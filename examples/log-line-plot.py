@@ -13,8 +13,8 @@ from pssgplot.lineplot import LinePlot
 with PlotEnvironment(font_path=Path("../fonts/gillsans.ttf")):
     df = pd.DataFrame(
         {
-            "x": [0, 100, 2200, 3050, 40800],
-            "y": [0, 200, 1000, 3000, 40000],
+            "x": [1, 100, 2200, 3050, 40800],
+            "y": [1, 200, 1000, 3000, 40000],
         }
     )
 
