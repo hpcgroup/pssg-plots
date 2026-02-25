@@ -21,9 +21,8 @@ with PlotEnvironment(font_path='../fonts/gillsans.ttf'):
     hm = Heatmap()
     hm.plot(
         data=df,
-        row="x",
-        row="x",
-        col="y",
+        row="y",
+        col="x",
         value="value",
         title="Simple Heatmap",
         bounds=[0.25, 0.5, 0.9, 1.1, 1.5, 1.75],

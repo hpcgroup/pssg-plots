@@ -45,7 +45,7 @@ class Heatmap(Plot):
         bounds: Optional[List[float]],
         colors: Optional[List[str]],
         cmap: Union[str, Colormap, None],
-        extend: Optional[str, None],
+        extend: Union[str, None],
     ) -> Tuple[Union[str, Colormap], Optional[mcolors.Normalize]]:
         if bounds is not None:
             if colors is None:
