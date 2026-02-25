@@ -18,6 +18,7 @@ with PlotEnvironment(font_path='../fonts/gillsans.ttf'):
                   0.5,0.3,0.1,0.2,
                   1.2,1.05,1.6,2.1]
     })
+    bounds = [0.25, 0.5, 0.9, 1.1, 1.5, 2.0]
     hm = Heatmap()
     hm.plot(
         data=df,
@@ -25,11 +26,11 @@ with PlotEnvironment(font_path='../fonts/gillsans.ttf'):
         col="y",
         value="value",
         title="Simple Heatmap",
-        bounds=[0.25, 0.5, 0.9, 1.1, 1.5, 2.0],
-        colors=["#BD0026", "#FD8D3C", "#C7E9B4", "#41B6C4", "#253494"],
+        bounds=[0.25, 0.5, 0.9, 1.1, 1.5, 1.75],
+        colors=["#d73027","#fc8d59","#fee090","#ffffbf","#e0f3f8","#91bfdb","#4575b4"],
         annot_fmt=lambda v: f"{v:.1f}" if v >= 1 else f"{v:.2f}",
         cbar_label="Speedup",
-        cbar_ticks=[0.5, 0.75, 1, 2, 4, 8],
+        cbar_extend="both"
     )
 
     # use .animate to save a row-by-row animation of the heatmap

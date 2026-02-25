@@ -47,21 +47,14 @@ class Heatmap(Plot):
         cmap: Union[str, Colormap, None],
         vmin: Optional[float],
         vmax: Optional[float],
+        extend: Optional[str,None],
     ) -> Tuple[Union[str, Colormap], Optional[mcolors.Normalize]]:
         if bounds is not None:
             n_bins = len(bounds) - 1
-            if colors is not None:
-                if len(colors) != n_bins:
-                    raise ValueError(
-                        f"len(colors) ({len(colors)}) must equal len(bounds) - 1 ({n_bins})."
-                    )
-                listed = mcolors.ListedColormap(colors)
-            else:
-                base = plt.get_cmap(cmap) if isinstance(cmap, str) else cmap
-                listed = mcolors.ListedColormap(
-                    [base(i / n_bins) for i in range(n_bins)]
-                )
-            norm = mcolors.BoundaryNorm(bounds, ncolors=n_bins, clip=True)
+            
+            base = plt.get_cmap(cmap) if isinstance(cmap, str) else cmap
+            listed = mcolors.ListedColormap(colors)
+            norm = mcolors.BoundaryNorm(bounds, ncolors=len(colors), clip=extend is None, extend=extend)
             return listed, norm
         return cmap, None
 
@@ -109,6 +102,7 @@ class Heatmap(Plot):
         cbar_label: Optional[str] = None,
         cbar_ticks: Optional[List[float]] = None,
         cbar_ticklabels: Optional[List[str]] = None,
+        cbar_extend: Optional[str] = None,
         linewidths: float = 0.5,
         linecolor: str = "white",
         **kwargs,
@@ -121,7 +115,7 @@ class Heatmap(Plot):
             self.ax = ax
             self.fig = ax.get_figure()
 
-        resolved_cmap, norm = self._build_norm(bounds, colors, cmap, vmin, vmax)
+        resolved_cmap, norm = self._build_norm(bounds, colors, cmap, vmin, vmax, cbar_extend)
 
         if annot and annot_fmt is not None:
             annot_data = self._build_annot_matrix(self.data, annot_fmt)
