@@ -78,19 +78,8 @@ class BoxPlot(Plot):
         if ylim is not None:
             self.ax.set_ylim(ylim)
 
-        if error is not None:
-            if error not in data.columns:
-                raise ValueError(f"Column {error} not in data.")
-            self.ax.errorbar(
-                x=data[x],
-                y=data[y],
-                yerr=data[error],
-                fmt="none",
-                color="#606060",
-                capsize=5,
-                elinewidth=2,
-                capthick=2,
-            )
+        # Note: error bars are not added for box plots, since the box itself
+        # already visualizes data spread (quartiles, whiskers, outliers).
 
         if legend:
             legend_kwargs = dict(
@@ -139,15 +128,19 @@ class BoxPlot(Plot):
                 bar.set_edgecolor("k")
 
             if "hue" in kwargs:
-                for i, p in enumerate(self.ax.get_legend().get_patches()):
-                    p.set_hatch(hatches[i % n_groups])
-                    p.set_edgecolor("k")
+                legend = self.ax.get_legend()
+                if legend is not None:
+                    for i, p in enumerate(legend.get_patches()):
+                        p.set_hatch(hatches[i % n_groups])
+                        p.set_edgecolor('k')
 
         if tight_layout:
             self.fig.tight_layout()
 
         if legend_title is not None:
-            self.ax.get_legend().set_title(legend_title)
+            legend = self.ax.get_legend()
+            if legend is not None:
+                legend.set_title(legend_title)
 
         return self.ax
 
