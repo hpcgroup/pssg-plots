@@ -7,7 +7,6 @@ import os
 # tpl imports
 import matplotlib.pyplot as plt
 from matplotlib.axes import Axes
-import matplotlib.animation as animation
 import pandas as pd
 import seaborn as sns
 
@@ -69,10 +68,10 @@ class BoxPlot(Plot):
             self.ax.set_ylabel(ylabel, fontsize=ylabel_fontsize)
 
         if logx is not None:
-            self.ax.set_xscale("log", basex=logx)
+            self.ax.set_xscale("log", base=logx)
 
         if logy is not None:
-            self.ax.set_yscale("log", basey=logy)
+            self.ax.set_yscale("log", base=logy)
 
         if xlim is not None:
             self.ax.set_xlim(xlim)
