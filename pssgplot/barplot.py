@@ -259,7 +259,9 @@ class BarPlot(Plot):
             self._custom_tick_lines.append(line)
 
         if legend_title is not None:
-            self.ax.get_legend().set_title(legend_title)
+            legend = self.ax.get_legend()
+            if legend is not None:
+                legend.set_title(legend_title)
 
         return self.ax
 
