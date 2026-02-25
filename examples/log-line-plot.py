@@ -1,4 +1,4 @@
-"""A simple line plot example"""
+"""A simple log-log line plot example"""
 
 import sys
 from pathlib import Path
