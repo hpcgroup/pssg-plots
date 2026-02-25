@@ -147,7 +147,7 @@ class LinePlot(Plot):
         for line in lines:
             try:
                 xdata = line.get_xdata()
-            except Exception:
+            except AttributeError:
                 xdata = []
             if len(xdata) > 0:
                 data_lines.append(line)
@@ -246,15 +246,11 @@ class LinePlot(Plot):
 
         def _set_linear_limits(series, axis, set_lim):
             data_max = series.max()
-            if pd.isna(data_max):
+            if pd.isna(data_max) or data_max <= 0:
                 return
-            if data_max <= 0:
-                step = 1
-                upper = 1
-            else:
-                desired_ticks = 6
-                step = _nice_num(data_max / (desired_ticks - 1), True)
-                upper = math.ceil(data_max / step) * step
+            desired_ticks = 6
+            step = _nice_num(data_max / (desired_ticks - 1), True)
+            upper = math.ceil(data_max / step) * step
             set_lim(0, upper)
             n = int(round(upper / step))
             ticks = [i * step for i in range(n + 1)]

@@ -23,7 +23,7 @@ class BarPlot(Plot):
 
     def __init__(self):
         pass
-    
+
     def plot(
         self,
         data: pd.DataFrame,
@@ -65,19 +65,19 @@ class BarPlot(Plot):
 
         if title is not None:
             self.ax.set_title(title, fontsize=title_fontsize)
-        
+
         if xlabel is not None:
             self.ax.set_xlabel(xlabel, fontsize=xlabel_fontsize)
-        
+
         if ylabel is not None:
             self.ax.set_ylabel(ylabel, fontsize=ylabel_fontsize)
 
         if logx is not None:
             self.ax.set_xscale('log', basex=logx)
-        
+
         if logy is not None:
             self.ax.set_yscale('log', basey=logy)
-        
+
         if xlim is not None:
             self.ax.set_xlim(xlim)
 
@@ -111,7 +111,7 @@ class BarPlot(Plot):
             if legend_title is not None:
                 legend_kwargs["title"] = legend_title
             self.ax.legend(**legend_kwargs)
-            
+
 
         tick_color = '#606060'
         tick_width = 0.8
@@ -157,7 +157,7 @@ class BarPlot(Plot):
 
         if hatch:
             hatches = ['x', 'xxx', '\\\\', '||','///', '+', 'o', '.', '*', '-', 'ooo', '+++', '...', '---',  'xx', '++']
-            
+
             if 'hue' in kwargs:
                 n_groups = len(data[kwargs['hue']].unique())
                 group_size = len(data[x].unique())
@@ -201,15 +201,11 @@ class BarPlot(Plot):
 
         def _set_linear_limits(series, axis, set_lim):
             data_max = series.max()
-            if pd.isna(data_max):
+            if pd.isna(data_max) or data_max <= 0:
                 return
-            if data_max <= 0:
-                step = 1
-                upper = 1
-            else:
-                desired_ticks = 6
-                step = _nice_num(data_max / (desired_ticks - 1), True)
-                upper = math.ceil(data_max / step) * step
+            desired_ticks = 6
+            step = _nice_num(data_max / (desired_ticks - 1), True)
+            upper = math.ceil(data_max / step) * step
             set_lim(0, upper)
             n = int(round(upper / step))
             ticks = [i * step for i in range(n + 1)]

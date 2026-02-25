@@ -27,7 +27,7 @@ with PlotEnvironment():
         markers=True,
         legend=True,
     )
-    
+
     # Use .animate to save an animation of the plot
     simple_line.animate(by='column', save_dir='output')
 
