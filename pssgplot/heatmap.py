@@ -54,7 +54,6 @@ class Heatmap(Plot):
                 )
             n_bins = len(bounds) - 1
 
-            base = plt.get_cmap(cmap) if isinstance(cmap, str) else cmap
             listed = mcolors.ListedColormap(colors)
             norm = mcolors.BoundaryNorm(
                 bounds,
