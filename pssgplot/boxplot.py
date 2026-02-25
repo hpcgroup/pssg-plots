@@ -36,7 +36,6 @@ class BoxPlot(Plot):
         xlim: Optional[Tuple[Optional[float], Optional[float]]] = None,
         ylim: Optional[Tuple[Optional[float], Optional[float]]] = None,
         error: Optional[str] = None,
-        labels: Optional[str] = None,
         label_fontsize: Optional[int] = None,
         label_fmt: str = "{:.1f}",
         ax: Optional[Axes] = None,
@@ -107,20 +106,6 @@ class BoxPlot(Plot):
         self.ax.yaxis.grid(linestyle="dashed", zorder=0)
         self.ax.spines["left"].set_color("#606060")
         self.ax.spines["bottom"].set_color("#606060")
-
-        if labels is not None:
-            for p in self.ax.patches:
-                if p.get_width() <= 0:
-                    continue
-                self.ax.annotate(
-                    label_fmt.format(p.get_height()),
-                    (p.get_x() + p.get_width() / 2.0, p.get_height()),
-                    ha="center",
-                    va="center",
-                    xytext=(0, 10),
-                    textcoords="offset points",
-                    fontsize=label_fontsize,
-                )
 
         if hatch:
             hatches = hatches or [
