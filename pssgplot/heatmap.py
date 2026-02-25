@@ -45,14 +45,23 @@ class Heatmap(Plot):
         bounds: Optional[List[float]],
         colors: Optional[List[str]],
         cmap: Union[str, Colormap, None],
-        vmin: Optional[float],
-        vmax: Optional[float],
-        extend: Optional[str,None],
+        extend: Optional[str, None],
     ) -> Tuple[Union[str, Colormap], Optional[mcolors.Normalize]]:
         if bounds is not None:
+            if colors is None:
+                raise ValueError(
+                    "When 'bounds' is provided, 'colors' must also be provided and not None."
+                )
+            n_bins = len(bounds) - 1
+
             base = plt.get_cmap(cmap) if isinstance(cmap, str) else cmap
             listed = mcolors.ListedColormap(colors)
-            norm = mcolors.BoundaryNorm(bounds, ncolors=len(colors), clip=extend is None, extend=extend)
+            norm = mcolors.BoundaryNorm(
+                bounds,
+                ncolors=len(colors),
+                clip=extend is None,
+                extend=extend,
+            )
             return listed, norm
         return cmap, None
 
