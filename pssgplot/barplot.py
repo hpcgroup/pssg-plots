@@ -95,7 +95,15 @@ class BarPlot(Plot):
             )
 
         if legend:
-            self.ax.legend(loc=legend_loc, bbox_to_anchor=legend_bbox, fontsize=legend_fontsize, ncol=legend_ncol, title=legend_title)
+            legend_kwargs = {
+                'loc': legend_loc,
+                'bbox_to_anchor': legend_bbox,
+                'fontsize': legend_fontsize,
+                'ncol': legend_ncol,
+                'title': legend_title,
+            }
+            legend_kwargs = {k: v for k, v in legend_kwargs.items() if v is not None}
+            self.ax.legend(**legend_kwargs)
             
 
         self.ax.yaxis.grid(linestyle='dashed', zorder=0)
@@ -118,22 +126,23 @@ class BarPlot(Plot):
 
         if hatch:
             hatches = ['x', 'xxx', '\\\\', '||','///', '+', 'o', '.', '*', '-', 'ooo', '+++', '...', '---',  'xx', '++']
-            
+
             if 'hue' in kwargs:
                 n_groups = len(data[kwargs['hue']].unique())
-                group_size = len(data[x].unique())
+                for i in range(n_groups):
+                    for bar in self.ax.containers[i]:
+                        bar.set_hatch(hatches[i])
+                        bar.set_edgecolor('k')
+
+                ax_legend = self.ax.get_legend()
+                if ax_legend:
+                    for i, p in enumerate(ax_legend.get_patches()):
+                        p.set_hatch(hatches[i])
+                        p.set_edgecolor('k')
             else:
-                n_groups = len(data[x].unique())
-                group_size = 1
-
-            for i, bar in enumerate(self.ax.patches):
-                bar.set_hatch(hatches[i // group_size])
-                bar.set_edgecolor('k')
-
-            if 'hue' in kwargs:
-                for i, p in enumerate(self.ax.get_legend().get_patches()):
-                    p.set_hatch(hatches[i % n_groups])
-                    p.set_edgecolor('k')
+                for i, bar in enumerate(self.ax.patches):
+                    bar.set_hatch(hatches[i])
+                    bar.set_edgecolor('k')
 
         if tight_layout:
             self.fig.tight_layout()
