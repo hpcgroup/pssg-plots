@@ -4,7 +4,10 @@ import math
 from typing import Iterable, List, Optional
 
 from cycler import cycler
+import matplotlib as mpl
 from matplotlib.axes import Axes
+from matplotlib import font_manager as fm
+import matplotlib.pyplot as plt
 
 
 PSSG_COLORS = ["#D55E00", "#009E73", "#0072B2", "#CC79A7", "#643B9F", "#E03A3D"]
@@ -64,23 +67,17 @@ def get_hatches() -> List[str]:
 
 
 def make_prop_cycle(
-    colors: Optional[Iterable[str]] = None,
-    linestyles: Optional[Iterable[object]] = None,
-    markers: Optional[Iterable[str]] = None,
+    colors: Optional[Iterable[str]] = get_colors(),
+    linestyles: Optional[Iterable[object]] = get_linestyles(),
+    markers: Optional[Iterable[str]] = get_markers(),
 ):
-    """Build a style cycle combining color, linestyle, and marker."""
-    color_values = list(colors) if colors is not None else get_colors()
-    linestyle_values = list(linestyles) if linestyles is not None else get_linestyles()
-    marker_values = list(markers) if markers is not None else get_markers()
-
-    cycle_len = min(len(color_values), len(linestyle_values), len(marker_values))
+    cycle_len = min(len(colors), len(linestyles), len(markers))
     if cycle_len == 0:
         raise ValueError("colors, linestyles, and markers must be non-empty.")
 
     return (
-        cycler(color=color_values[:cycle_len])
-        + cycler(linestyle=linestyle_values[:cycle_len])
-        + cycler(marker=marker_values[:cycle_len])
+        cycler(color=colors[:cycle_len])
+        + cycler(linestyle=linestyles[:cycle_len], marker=markers[:cycle_len])
     )
 
 
@@ -118,3 +115,20 @@ def set_aspect_ratio(ax, ratio=3 / 5, logx=None, logy=None):
     if dy == 0:
         raise ValueError("y range is zero; cannot set aspect")
     ax.set_aspect((dx / dy) * ratio)
+
+def setup_local(ax=None, grid=True, color="#606060",
+                spines=['left', 'bottom'], aspect_ratio=3/5):
+    if ax is None:
+        plt.clf()
+        ax = plt.gca()
+
+    if grid:
+        ax.yaxis.grid(linestyle='dotted', color=color)
+
+    for s in spines:
+        ax.spines[s].set_color("#606060")
+    
+    set_aspect_ratio(ax, aspect_ratio)
+    ax.set_prop_cycle(make_prop_cycle())
+
+    return ax
