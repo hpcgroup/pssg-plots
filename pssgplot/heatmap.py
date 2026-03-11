@@ -7,7 +7,7 @@ import os
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 from matplotlib.axes import Axes
-from matplotlib.colors import Colormap
+from matplotlib.colors import Colormap, Normalize
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -46,15 +46,14 @@ class Heatmap(Plot):
         colors: Optional[List[str]],
         cmap: Union[str, Colormap, None],
         vmin: Optional[float],
-        vmax: Option[float],
+        vmax: Optional[float],
         extend: Union[str, None],
-    ) -> Tuple[Union[str, Colormap], Optional[mcolors.Normalize]]:
+    ) -> Tuple[Union[str, Colormap], Optional[Normalize]]:
         if bounds is not None:
             if colors is None:
                 raise ValueError(
                     "When 'bounds' is provided, 'colors' must also be provided and not None."
                 )
-            n_bins = len(bounds) - 1
 
             listed = mcolors.ListedColormap(colors)
             norm = mcolors.BoundaryNorm(
@@ -64,7 +63,11 @@ class Heatmap(Plot):
                 extend=extend,
             )
             return listed, norm
-        return cmap, None
+        elif vmin is not None or vmax is not None:
+            norm = Normalize(vmin=vmin, vmax=vmax)
+            return cmap, norm
+        else:
+            return cmap, None
 
     @staticmethod
     def _build_annot_matrix(
