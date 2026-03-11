@@ -47,7 +47,7 @@ class Heatmap(Plot):
         cmap: Union[str, Colormap, None],
         vmin: Optional[float],
         vmax: Optional[float],
-        extend: Union[str, None],
+        extend: Union[str, None] = "neither",
     ) -> Tuple[Union[str, Colormap], Optional[Normalize]]:
         if bounds is not None:
             if colors is None:
@@ -113,7 +113,7 @@ class Heatmap(Plot):
         cbar_label: Optional[str] = None,
         cbar_ticks: Optional[List[float]] = None,
         cbar_ticklabels: Optional[List[str]] = None,
-        cbar_extend: Optional[str] = None,
+        cbar_extend: Optional[str] = "neither",
         linewidths: float = 0.5,
         linecolor: str = "white",
         **kwargs,
