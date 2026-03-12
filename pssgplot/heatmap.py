@@ -204,8 +204,10 @@ class Heatmap(Plot):
             os.makedirs(save_dir)
 
         original = self.data.values.astype(float)
-        n_frames = original.shape[0] if by == 'row' else original.shape[1]
+        n_rows, n_cols = original.shape
+        n_frames = n_rows if by == 'row' else n_cols
         mesh = self.ax.collections[0]
+        texts = self.ax.texts
 
         for frame in range(n_frames):
             masked = np.full_like(original, np.nan)
@@ -214,6 +216,13 @@ class Heatmap(Plot):
             else:
                 masked[:, :frame + 1] = original[:, :frame + 1]
             mesh.set_array(masked.ravel())
+
+            if len(texts) == n_rows * n_cols:
+                for i in range(n_rows):
+                    for j in range(n_cols):
+                        visible = (i <= frame) if by == 'row' else (j <= frame)
+                        texts[i * n_cols + j].set_visible(visible)
+
             self.fig.savefig(
                 os.path.join(save_dir, f"frame_{frame}.{frame_format}"),
                 **kwargs,
