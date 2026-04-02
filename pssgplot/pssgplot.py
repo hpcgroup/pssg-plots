@@ -35,7 +35,7 @@ class PlotEnvironment:
         """ Initialize PSSG plot environment.
 
         Args:
-        
+
             font_name (str, optional): Name of font to use. Defaults to None.
             font_path (PathLike, optional): Path to font to use. Defaults to None.
             font_scale (float, optional): Font scale. Defaults to 1.0.
@@ -44,7 +44,7 @@ class PlotEnvironment:
             backend (str, optional): Name of backend to use. Defaults to None.
 
         Raises:
-            
+
             ValueError: If neither font_name nor font_path is specified.
             ValueError: If font_scale is not positive.
             ValueError: If interactive is True, but Agg, TkAgg, Qt5Agg, or Qt6Agg are not available.
@@ -52,7 +52,7 @@ class PlotEnvironment:
         """
         if interactive and backend is not None:
             raise ValueError("interactive and backend cannot both be specified.")
-        
+
         font_name = self._resolve_font(font_name, font_path)
 
         if font_scale <= 0:
@@ -70,7 +70,7 @@ class PlotEnvironment:
 
         self._font_name = font_name or "sans-serif"
         self._font_scale = font_scale
-        self._color_palette = color_palette or sns.color_palette(['#D55E00', '#009E73','#0072B2', '#CC79A7', '#643B9F', '#E03A3D'], 6)
+        self._color_palette = color_palette or sns.color_palette(['#D55E00', '#0072B2', '#009E73', '#000000', '#800080', '#CC79A7', '#E69F00', '#56B4E9'], 8)
         self._interactive = interactive
 
 
@@ -83,7 +83,7 @@ class PlotEnvironment:
             context={
                 'axes.spines.right': False,
                 'axes.spines.top': False,
-                'lines.linewidth': 2, 
+                'lines.linewidth': 2,
                 'lines.markersize': 8,
                 'font.family': self._font_name,
             }
@@ -116,21 +116,21 @@ class PlotEnvironment:
 
         if font_path is not None:
             return self._load_font(font_path)
-        
+
         if font_name is not None:
             return font_name
-        
+
         # Use bundled Gill Sans font if available
         bundled_font_path = Path(__file__).parent.parent / "fonts" / "gillsans.ttf"
         if bundled_font_path.exists():
             return self._load_font(bundled_font_path)
-        
+
         # Look for system Gill Sans or Gill Sans MT fonts
         available_fonts = [f.name for f in fontManager.ttflist]
         for font_candidate in ['Gill Sans MT', 'Gill Sans', 'GillSans']:
             if font_candidate in available_fonts:
                 return font_candidate
-        
+
         # Fall back to default font with warning
         warnings.warn(
             "Gill Sans font not found. Using default sans-serif font. "
