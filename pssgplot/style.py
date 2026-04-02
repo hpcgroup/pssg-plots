@@ -10,7 +10,8 @@ from matplotlib import font_manager as fm
 import matplotlib.pyplot as plt
 
 
-PSSG_COLORS = ["#D55E00", "#009E73", "#0072B2", "#CC79A7", "#643B9F", "#E03A3D"]
+PSSG_COLORS = ["#D55E00", "#0072B2", "#009E73", "#000000", "#800080", "#CC79A7", "#E69F00", "56B4E9"]
+PSSG_BAR_COLORS = [c in PSSG_COLORS if c != "#000000"]
 
 PSSG_LINESTYLES = [
     "solid",
@@ -31,27 +32,21 @@ PSSG_MARKERS = [
 ]
 
 PSSG_HATCHES = [
-    "x",
     "xxx",
-    "\\\\",
-    "||",
-    "///",
-    "+",
-    "o",
-    ".",
-    "*",
-    "-",
-    "ooo",
-    "+++",
-    "...",
-    "---",
-    "xx",
+    "//",
+    "|||",
+    "OO",
     "++",
+    "**",
+    "\\\",
 ]
 
 
-def get_colors() -> List[str]:
-    return list(PSSG_COLORS)
+def get_colors(plot_type: Optional[str] = "line") -> List[str]:
+    if plot_type == "bar":
+        return list(PSSG_BAR_COLORS)
+    else:
+        return list(PSSG_COLORS)
 
 
 def get_linestyles() -> List[object]:
@@ -127,7 +122,7 @@ def setup_local(ax=None, grid=True, color="#606060",
 
     for s in spines:
         ax.spines[s].set_color("#606060")
-    
+
     set_aspect_ratio(ax, aspect_ratio)
     ax.set_prop_cycle(make_prop_cycle())
 
