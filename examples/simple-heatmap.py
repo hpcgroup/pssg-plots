@@ -4,9 +4,9 @@ sys.path.append('.')
 sys.path.append('..')
 from pssgplot import PlotEnvironment, Heatmap
 import pandas as pd
-import numpy as np
+from pathlib import Path
 
-with PlotEnvironment(font_path='../fonts/gillsans.ttf'):
+with PlotEnvironment(font_path=Path('../fonts/gillsans.ttf')):
     df = pd.DataFrame({
         "x": [0,1,2,3,
               0,1,2,3,
@@ -33,7 +33,7 @@ with PlotEnvironment(font_path='../fonts/gillsans.ttf'):
     )
 
     # use .animate to save a row-by-row animation of the heatmap
-    hm.animate(by='row', save_dir='output')
+    hm.animate(by='row', save_dir=Path('output'))
 
     # use .show or .save to output the figure
     # hm.show()

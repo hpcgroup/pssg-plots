@@ -1,13 +1,13 @@
 """ Wrapper class to plot a heatmap. """
 # std imports
-from typing import Callable, List, Optional, Tuple, Union
+from typing import Callable, List, Optional, Tuple, Union, Literal
 import os
 
 # tpl imports
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 from matplotlib.axes import Axes
-from matplotlib.colors import Colormap, Normalize
+from matplotlib.colors import Colormap, Normalize, BoundaryNorm
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -44,11 +44,12 @@ class Heatmap(Plot):
     def _build_norm(
         bounds: Optional[List[float]],
         colors: Optional[List[str]],
-        cmap: Union[str, Colormap, None],
+        cmap: Union[str, Colormap],
         vmin: Optional[float],
         vmax: Optional[float],
-        extend: Union[str, None] = "neither",
-    ) -> Tuple[Union[str, Colormap], Optional[Normalize]]:
+        extend: Literal["neither", "both", "min", "max"] = "neither",
+    ) -> Tuple[Union[str, Colormap], Union[BoundaryNorm, Normalize, None]]:
+        norm: Union[BoundaryNorm, Normalize, None] = None
         if bounds is not None:
             if colors is None:
                 raise ValueError(
@@ -81,12 +82,14 @@ class Heatmap(Plot):
                 if pd.isna(v):
                     result[i, j] = ""
                 elif callable(annot_fmt):
+                    if not isinstance(v, (int, float)):
+                        raise ValueError(f"Value {v!r} is not a number.")
                     result[i, j] = annot_fmt(v)
                 else:
                     result[i, j] = annot_fmt.format(v)
         return result
 
-    def plot(
+    def plot(  # type: ignore[override]
         self,
         data: pd.DataFrame,
         row: Optional[str] = None,
@@ -101,7 +104,7 @@ class Heatmap(Plot):
         figsize: Tuple[float, float] = (6, 4.5),
         ax: Optional[Axes] = None,
         tight_layout: bool = True,
-        cmap: Union[str, Colormap, None] = "YlOrRd",
+        cmap: Union[str, Colormap] = "YlOrRd",
         vmin: Optional[float] = None,
         vmax: Optional[float] = None,
         bounds: Optional[List[float]] = None,
@@ -113,7 +116,7 @@ class Heatmap(Plot):
         cbar_label: Optional[str] = None,
         cbar_ticks: Optional[List[float]] = None,
         cbar_ticklabels: Optional[List[str]] = None,
-        cbar_extend: Optional[str] = "neither",
+        cbar_extend: Literal["neither", "both", "min", "max"] = "neither",
         linewidths: float = 0.5,
         linecolor: str = "white",
         **kwargs,
@@ -128,6 +131,7 @@ class Heatmap(Plot):
 
         resolved_cmap, norm = self._build_norm(bounds, colors, cmap, vmin, vmax, cbar_extend)
 
+        annot_data: Union[np.ndarray, bool]
         if annot and annot_fmt is not None:
             annot_data = self._build_annot_matrix(self.data, annot_fmt)
             fmt = ""
@@ -135,9 +139,10 @@ class Heatmap(Plot):
             annot_data = annot
             fmt = ".2g"
 
-        cbar_kws = {}
+        cbar_kws: dict[str, List[float] | Literal["neither", "both", "min", "max"]] = {}
         if cbar_ticks is not None:
             cbar_kws["ticks"] = cbar_ticks
+        cbar_kws["extend"] = cbar_extend
 
         heatmap_kwargs = dict(
             cmap=resolved_cmap,
@@ -158,8 +163,12 @@ class Heatmap(Plot):
 
         if cbar and (cbar_label is not None or cbar_ticklabels is not None):
             colorbar = self.ax.collections[0].colorbar
+            if colorbar is None:
+                raise ValueError("Colorbar not found.")
             if cbar_label is not None:
-                colorbar.set_label(cbar_label)
+                if cbar_ticks is None:
+                    cbar_ticks = list(colorbar.get_ticks())
+                colorbar.set_ticks(cbar_ticks, labels=cbar_ticklabels)
             if cbar_ticklabels is not None:
                 colorbar.set_ticklabels(cbar_ticklabels)
 
@@ -173,12 +182,12 @@ class Heatmap(Plot):
         self.ax.spines['left'].set_color('#606060')
         self.ax.spines['bottom'].set_color('#606060')
 
-        if tight_layout:
+        if tight_layout and isinstance(self.fig, plt.Figure):
             self.fig.tight_layout()
 
         return self.ax
 
-    def animate(
+    def animate(  # type: ignore[override]
         self,
         by: str,
         save_dir: os.PathLike,
