@@ -76,7 +76,8 @@ class PlotEnvironment:
         self._font_name = font_name or "sans-serif"
         self._font_scale = font_scale
         self._color_palette = color_palette or get_colors(
-                plot_type=plot_type)
+            plot_type=plot_type,
+        )
         self._interactive = interactive
 
 
