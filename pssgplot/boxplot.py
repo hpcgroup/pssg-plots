@@ -96,7 +96,7 @@ class BoxPlot(Plot):
         self.ax.spines["left"].set_color("#606060")
         self.ax.spines["bottom"].set_color("#606060")
 
-        self.ax.tick_params(axis='both', direction='in')
+        self.ax.tick_params(axis='both', direction='in', color='#606060')
 
         if hatch:
             hatches = hatches or HATCHES
