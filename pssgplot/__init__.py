@@ -19,6 +19,8 @@ __all__ = [
     "Plot",
     "BarPlot",
     "LinePlot",
+    "Heatmap",
+    "BoxPlot",
     "apply_axes_style",
     "get_colors",
     "get_hatches",
