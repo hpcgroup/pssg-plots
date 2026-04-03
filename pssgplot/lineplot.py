@@ -124,7 +124,7 @@ class LinePlot(Plot):
             self._lines_data.append((xdata, ydata))
         return self.ax
 
-    def animate(self, by: str, save_dir: os.PathLike, left_to_right: bool = True, frame_format: str = 'pdf', **kwargs):
+    def animate(self, by: str, save_dir: os.PathLike, left_to_right: bool = True, frame_format: str = 'pdf', **kwargs):  # type: ignore[override]
         """
         Animate the line plot. Produces a frame for each animation step.
         There are two animation modes:

@@ -7,9 +7,10 @@ import os
 # tpl imports
 import matplotlib.pyplot as plt
 from matplotlib.axes import Axes
-import matplotlib.animation as animation
+import numpy as np
 import pandas as pd
 import seaborn as sns
+import matplotlib.colors as mcolors
 
 # local imports
 from pssgplot import Plot, HATCHES
@@ -25,6 +26,9 @@ class BarPlot(Plot):
         x: str,
         y: str,
         hatch: bool = True,
+        linewidth: float = 0,
+        edgecolor: str = 'black',
+        gap: float = 0.03,
         title: Optional[str] = None,
         title_fontsize: Optional[int] = None,
         xlabel: Optional[str] = None,
@@ -56,7 +60,7 @@ class BarPlot(Plot):
         self.kwargs = kwargs
 
         self.fig = plt.figure(figsize=figsize)
-        self.ax = sns.barplot(data=data, x=x, y=y, ax=ax, zorder=3, **kwargs)
+        self.ax = sns.barplot(data=data, x=x, y=y, ax=ax, zorder=3, linewidth=linewidth, edgecolor=edgecolor, gap=gap, **kwargs)
 
         if title is not None:
             self.ax.set_title(title, fontsize=title_fontsize)
@@ -78,6 +82,22 @@ class BarPlot(Plot):
 
         if ylim is not None:
             self.ax.set_ylim(ylim)
+        else:
+            ylim = self.ax.get_ylim()
+            print(ylim)
+            yticks = self.ax.get_yticks()
+            print(yticks)
+            highest_tick = yticks[-1]
+            lowest_tick = yticks[0]
+            tick_step = yticks[1] - yticks[0]
+            tick_list = self.ax.get_yticks()
+            if highest_tick < ylim[1]:
+                print(f"Adding tick {highest_tick + tick_step}")
+                tick_list = np.append(tick_list, highest_tick + tick_step)
+            if lowest_tick > ylim[0]:
+                print(f"Adding tick {lowest_tick - tick_step}")
+                tick_list = np.insert(tick_list, 0, lowest_tick - tick_step)
+            self.ax.set_yticks(tick_list)
 
         if error is not None:
             if error not in data.columns:
@@ -129,12 +149,12 @@ class BarPlot(Plot):
 
             for i, bar in enumerate(self.ax.patches):
                 bar.set_hatch(hatches[i // group_size])
-                bar.set_edgecolor('k')
+                bar.set_edgecolor(edgecolor)
 
             if 'hue' in kwargs:
                 for i, p in enumerate(self.ax.get_legend().get_patches()):
                     p.set_hatch(hatches[i % n_groups])
-                    p.set_edgecolor('k')
+                    p.set_edgecolor(edgecolor)
 
         if tight_layout:
             self.fig.tight_layout()
@@ -144,7 +164,7 @@ class BarPlot(Plot):
 
         return self.ax
 
-    def animate(self, by: str, save_dir: os.PathLike, left_to_right: bool = True, frame_format: str = 'pdf', **kwargs):
+    def animate(self, by: str, save_dir: os.PathLike, left_to_right: bool = True, frame_format: str = 'pdf', **kwargs):  # type: ignore[override]
         """
         Animate the barplot. Produces a frame for each animation step. This is for creating plots where data
         is progressively added in for illustrative purposes.
