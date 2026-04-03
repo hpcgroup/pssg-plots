@@ -46,6 +46,7 @@ class PlotEnvironment:
             color_palette (Union[str, List[str]], optional): Color palette to use. Defaults to None.
             interactive (bool, optional): If True, uses matplotlib backend 'Agg', 'TkAgg', 'QtAgg' to enable interactive plots. Defaults to False.
             backend (str, optional): Name of backend to use. Defaults to None.
+            plot_type (str, optional): Plot type used to select the default color palette. Valid values include 'line' and 'bar'. Defaults to "line".
 
         Raises:
 
