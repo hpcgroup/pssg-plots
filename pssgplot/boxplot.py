@@ -1,7 +1,7 @@
 """Wrapper function to plot a boxplot."""
 
 # std imports
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Union
 import os
 
 # tpl imports
@@ -36,8 +36,8 @@ class BoxPlot(Plot):
         ylabel_fontsize: Optional[int] = None,
         logx: Optional[int] = None,
         logy: Optional[int] = None,
-        xlim: Optional[Tuple[Optional[float], Optional[float]]] = None,
-        ylim: Optional[Tuple[Optional[float], Optional[float]]] = None,
+        xlim: Union[Tuple[float, float], float, None] = None,
+        ylim: Union[Tuple[float, float], float, None] = None,
         error: Optional[str] = None,
         label_fontsize: Optional[int] = None,
         label_fmt: str = "{:.1f}",
@@ -113,6 +113,7 @@ class BoxPlot(Plot):
             if legend_ncol is not None:
                 legend_kwargs["ncol"] = legend_ncol
             self.ax.legend(**legend_kwargs)
+        leg_obj = self.ax.get_legend()
 
         self.ax.yaxis.grid(linestyle="dotted", zorder=0)
         self.ax.spines["left"].set_color("#606060")
@@ -134,20 +135,16 @@ class BoxPlot(Plot):
                 bar.set_hatch(hatches[i // group_size])
                 bar.set_edgecolor("k")
 
-            if "hue" in kwargs:
-                legend = self.ax.get_legend()
-                if legend is not None:
-                    for i, p in enumerate(legend.get_patches()):
-                        p.set_hatch(hatches[i % n_groups])
-                        p.set_edgecolor('k')
+            if "hue" in kwargs and leg_obj is not None:
+                for i, p in enumerate(leg_obj.get_patches()):
+                    p.set_hatch(hatches[i % n_groups])
+                    p.set_edgecolor('k')
 
         if tight_layout:
             self.fig.tight_layout()
 
-        if legend_title is not None:
-            legend = self.ax.get_legend()
-            if legend is not None:
-                legend.set_title(legend_title)
+        if legend_title is not None and leg_obj is not None:
+            leg_obj.set_title(legend_title)
 
         return self.ax
 

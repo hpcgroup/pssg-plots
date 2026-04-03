@@ -2,7 +2,7 @@
 """
 
 # std imports
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Union
 import os
 
 # tpl imports
@@ -35,8 +35,8 @@ class LinePlot(Plot):
         ylabel_fontsize: Optional[int] = None,
         logx: Optional[int] = None,
         logy: Optional[int] = None,
-        xlim: Optional[Tuple[Optional[float], Optional[float]]] = None,
-        ylim: Optional[Tuple[Optional[float], Optional[float]]] = None,
+        xlim: Union[Tuple[float, float], float, None] = None,
+        ylim: Union[Tuple[float, float], float, None] = None,
         error: Optional[str] = None,
         legend: bool = False,
         legend_title: Optional[str] = None,
@@ -130,6 +130,7 @@ class LinePlot(Plot):
             self.ax.legend(loc=legend_loc, bbox_to_anchor=legend_bbox, fontsize=legend_fontsize, ncol=legend_ncol, title=legend_title)
         elif 'hue' in kwargs:
             sns.move_legend(self.ax, "upper left", reverse=True)
+        leg_obj = self.ax.get_legend()
 
         self.ax.yaxis.grid(linestyle='dotted', zorder=0)
         self.ax.spines['left'].set_color('#606060')
@@ -140,15 +141,15 @@ class LinePlot(Plot):
         if tight_layout:
             self.fig.tight_layout()
 
-        if legend_title is not None and self.ax.get_legend():
-            self.ax.get_legend().set_title(legend_title)
+        if legend_title is not None and leg_obj is not None:
+            leg_obj.set_title(legend_title)
 
         # Store original data from the lines for animation
         self._lines_data = []
         for line in self.ax.get_lines():
             # Copy the full data for each line
-            xdata = line.get_xdata().copy()
-            ydata = line.get_ydata().copy()
+            xdata = np.array(line.get_xdata()).copy()
+            ydata = np.array(line.get_ydata()).copy()
             self._lines_data.append((xdata, ydata))
         return self.ax
 

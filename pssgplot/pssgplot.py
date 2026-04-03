@@ -3,7 +3,7 @@
 # std imports
 from os import PathLike
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import List, Optional, Tuple, Union
 import warnings
 
 # tpl imports
@@ -30,14 +30,14 @@ class PlotEnvironment:
 
     _font_name: Optional[str] = None
     _font_scale: float = 1.0
-    _color_palette: Optional[Union[str, List[str]]] = None
+    _color_palette: Union[str, List[str], List[Tuple[float, float, float]], None] = None
 
     def __init__(
         self,
         font_name: Optional[str] = None,
         font_path: Optional[PathLike] = None,
         font_scale: float = 1.0,
-        color_palette: Optional[Union[str, List[str]]] = None,
+        color_palette: Union[str, List[str], List[Tuple[float, float, float]], None] = None,
         interactive: bool = False,
         backend: Optional[str] = None,
     ):
@@ -113,7 +113,7 @@ class PlotEnvironment:
         fontManager.addfont(font_path)
         return FontProperties(fname=font_path).get_name()
 
-    def _resolve_font(self, font_name: Optional[str], font_path: Optional[str]) -> str:
+    def _resolve_font(self, font_name: Optional[str], font_path: Optional[PathLike]) -> str:
         """ Resolves the font to use for plotting.
             If neither font_name nor font_path is specified, look for the Gill Sans MT or Gill Sans font packaged with this library.
                 If it is not found, look for a systems Gill Sans or Gill Sans MT font. If it is still not found, print a warning and use the default font.

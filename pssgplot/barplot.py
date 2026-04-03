@@ -1,7 +1,7 @@
 """ Wrapper function to plot a barplot.
 """
 # std imports
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Union
 import os
 
 # tpl imports
@@ -10,7 +10,6 @@ from matplotlib.axes import Axes
 import numpy as np
 import pandas as pd
 import seaborn as sns
-import matplotlib.colors as mcolors
 
 # local imports
 from pssgplot import Plot, HATCHES
@@ -37,8 +36,8 @@ class BarPlot(Plot):
         ylabel_fontsize: Optional[int] = None,
         logx: Optional[int] = None,
         logy: Optional[int] = None,
-        xlim: Optional[Tuple[Optional[float], Optional[float]]] = None,
-        ylim: Optional[Tuple[Optional[float], Optional[float]]] = None,
+        xlim: Union[Tuple[float, float], float, None] = None,
+        ylim: Union[Tuple[float, float], float, None] = None,
         error: Optional[str] = None,
         labels: Optional[str] = None,
         label_fontsize: Optional[int] = None,
@@ -119,6 +118,7 @@ class BarPlot(Plot):
 
         if legend:
             self.ax.legend(loc=legend_loc, bbox_to_anchor=legend_bbox, fontsize=legend_fontsize, ncol=legend_ncol, title=legend_title)
+        leg_obj = self.ax.get_legend()
 
 
         self.ax.yaxis.grid(linestyle='dotted', zorder=0)
@@ -129,6 +129,8 @@ class BarPlot(Plot):
 
         if labels is not None:
             for p in self.ax.patches:
+                if not isinstance(p, plt.Rectangle):
+                    continue
                 if p.get_width() <= 0:
                     continue
                 self.ax.annotate(
@@ -155,16 +157,16 @@ class BarPlot(Plot):
                 bar.set_hatch(hatches[i // group_size])
                 bar.set_edgecolor(edgecolor)
 
-            if 'hue' in kwargs:
-                for i, p in enumerate(self.ax.get_legend().get_patches()):
+            if 'hue' in kwargs and leg_obj is not None:
+                for i, p in enumerate(leg_obj.get_patches()):
                     p.set_hatch(hatches[i % n_groups])
                     p.set_edgecolor(edgecolor)
 
         if tight_layout:
             self.fig.tight_layout()
 
-        if legend_title is not None:
-            self.ax.get_legend().set_title(legend_title)
+        if legend_title is not None and leg_obj is not None:
+            leg_obj.set_title(legend_title)
 
         return self.ax
 

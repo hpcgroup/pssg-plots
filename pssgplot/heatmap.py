@@ -158,8 +158,9 @@ class Heatmap(Plot):
         if norm is None:
             heatmap_kwargs["vmin"] = vmin
             heatmap_kwargs["vmax"] = vmax
+        final_kwargs = {**heatmap_kwargs, **kwargs}
 
-        sns.heatmap(self.data, ax=self.ax, **heatmap_kwargs, **kwargs)
+        sns.heatmap(self.data, ax=self.ax, **final_kwargs)
 
         colorbar = self.ax.collections[0].colorbar if cbar else None
         if cbar and (cbar_label is not None or cbar_ticklabels is not None):
