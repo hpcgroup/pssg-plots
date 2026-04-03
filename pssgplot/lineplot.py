@@ -14,10 +14,28 @@ import seaborn as sns
 # local imports
 from pssgplot import Plot, LINESTYLES, MARKERS
 
+HOLLOW_MARKERS = {'o', '^', 's', 'D', 'p'}
+FILLED_MARKERS = {'X'}
+
+
 class LinePlot(Plot):
 
     def __init__(self):
         self._lines_data = None  # To store original line data for animation
+
+    def _style_marker_fill(self, line) -> None:
+        marker = line.get_marker()
+        if marker in [None, 'None', '']:
+            return
+        color = line.get_color()
+        if marker in HOLLOW_MARKERS:
+            line.set_markerfacecolor('white')
+            line.set_markeredgecolor(color)
+            line.set_markeredgewidth(1.25)
+        elif marker in FILLED_MARKERS:
+            line.set_markerfacecolor(color)
+            line.set_markeredgecolor(color)
+            line.set_markeredgewidth(1.0)
 
     def plot(  # type: ignore[override]
         self,
@@ -62,6 +80,15 @@ class LinePlot(Plot):
         else:
             kwargs['marker'] = 'o' if markers else None
         self.ax = sns.lineplot(data=data, x=x, y=y, ax=ax, **kwargs)
+        for line in self.ax.get_lines():
+            self._style_marker_fill(line)
+        current_legend = self.ax.get_legend()
+        if current_legend is not None:
+            handles = getattr(current_legend, 'legend_handles', None)
+            if handles is None:
+                handles = getattr(current_legend, 'legendHandles', [])
+            for handle in handles:
+                self._style_marker_fill(handle)
 
         if title is not None:
             self.ax.set_title(title, fontsize=title_fontsize)
