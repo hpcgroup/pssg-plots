@@ -13,7 +13,16 @@ import seaborn as sns
 
 
 INTERACTIVE_BACKENDS = ['tkagg', 'qt5agg', 'qt6agg']
-
+PALETTE = ['#D55E00', '#0072B2', '#009E73', '#000000', '#800080', '#CC79A7', '#E69F00', '#56B4E9']
+HATCHES = ['xxx', '//', '|||', 'OO', '++', '**', '\\\\\\']
+MARKERS = ['^', 's', 'o', 'd', 'x', 'P']
+LINESTYLES = [(),                 # solid
+              (1, 2),             # dotted
+              (4, 2),             # dashed
+              (3, 1, 1, 1),       # densely dashdotted
+              (3, 1, 1, 1, 1, 1), # densely dashdotdotted
+              (5, 1),             # densely dashed
+              (7, 2, 1, 2)]       # dashdot
 
 class PlotEnvironment:
     """ PSSG plot environment.
@@ -70,7 +79,7 @@ class PlotEnvironment:
 
         self._font_name = font_name or "sans-serif"
         self._font_scale = font_scale
-        self._color_palette = color_palette or sns.color_palette(['#D55E00', '#0072B2', '#009E73', '#000000', '#800080', '#CC79A7', '#E69F00', '#56B4E9'], 8)
+        self._color_palette = color_palette or sns.color_palette(PALETTE, len(PALETTE))
         self._interactive = interactive
 
 
