@@ -8,27 +8,24 @@ from matplotlib.axes import Axes
 import matplotlib.pyplot as plt
 
 LINESTYLES_BY_NAME = {
-     'solid':                 (0, ()),
-     'loosely dotted':        (0, (1, 10)),
-     'dotted':                (0, (1, 5)),
-     'densely dotted':        (0, (1, 1)),
+     "solid":                 (0, ()),
+     "loosely dotted":        (0, (1, 10)),
+     "dotted":                (0, (1, 5)),
+     "densely dotted":        (0, (1, 1)),
 
-     'long dash with offset': (5, (10, 3)),
-     'loosely dashed':        (0, (5, 10)),
-     'dashed':                (0, (5, 5)),
-     'densely dashed':        (0, (5, 1)),
+     "long dash with offset": (5, (10, 3)),
+     "loosely dashed":        (0, (5, 10)),
+     "dashed":                (0, (5, 5)),
+     "densely dashed":        (0, (5, 1)),
 
-     'loosely dashdotted':    (0, (3, 10, 1, 10)),
-     'dashdotted':            (0, (3, 5, 1, 5)),
-     'densely dashdotted':    (0, (3, 1, 1, 1)),
+     "loosely dashdotted":    (0, (3, 10, 1, 10)),
+     "dashdotted":            (0, (3, 5, 1, 5)),
+     "densely dashdotted":    (0, (3, 1, 1, 1)),
 
-     'dashdotdotted':         (0, (3, 5, 1, 5, 1, 5)),
-     'loosely dashdotdotted': (0, (3, 10, 1, 10, 1, 10)),
-     'densely dashdotdotted': (0, (3, 1, 1, 1, 1, 1))}
+     "dashdotdotted":         (0, (3, 5, 1, 5, 1, 5)),
+     "loosely dashdotdotted": (0, (3, 10, 1, 10, 1, 10)),
+     "densely dashdotdotted": (0, (3, 1, 1, 1, 1, 1))}
 
-
-PSSG_COLORS = ["#D55E00", "#0072B2", "#009E73", "#000000", "#800080", "#CC79A7", "#E69F00", "#56B4E9"]
-PSSG_BAR_COLORS = [c for c in PSSG_COLORS if c != "#000000"]
 
 PSSG_LINESTYLE_NAMES = [
     "solid",
@@ -40,30 +37,12 @@ PSSG_LINESTYLE_NAMES = [
     "dashdotted",
     "dashdotdotted",
 ]
+
 PSSG_LINESTYLES = [LINESTYLES_BY_NAME[n] for n in PSSG_LINESTYLE_NAMES]
-
-PSSG_MARKERS = [
-    "o",
-    "^",
-    "s",
-    "d",
-    "X",
-    "p",
-    "*",
-    "P",
-]
-
-PSSG_HATCHES = [
-    "xxx",
-    "//",
-    "|||",
-    "OO",
-    "++",
-    "**",
-    "\\\\\\",
-    "..",
-    "---",
-]
+PSSG_COLORS = ["#D55E00", "#0072B2", "#009E73", "#000000", "#800080", "#CC79A7", "#E69F00", "#56B4E9"]                                        PSSG_BAR_COLORS = [c for c in PSSG_COLORS if c != "#000000"]
+PSSG_MARKERS = ["o", "^", "s", "d", "X", "p", "*", "P"]
+PSSG_HATCHES = ["xxx", "//", "|||", "OO", "++", "**", "\\\\\\",
+    "..", "---"]
 
 
 def get_colors(plot_type: Optional[str] = "line") -> List[str]:
@@ -134,6 +113,23 @@ def set_aspect_ratio(ax, ratio=3 / 5, logx=None, logy=None):
     if dy == 0:
         raise ValueError("y range is zero; cannot set aspect")
     ax.set_aspect((dx / dy) * ratio)
+
+currentdir = os.path.dirname(os.path.realpath(__file__))
+def setup_global(font_path=f'{currentdir}/fonts/gillsans.ttf'):
+
+    # set font
+    fm.fontManager.addfont(font_path)
+    mpl.rcParams['font.family'] = fm.FontProperties(fname=font_path)\              .get_name()
+
+    mpl.use('Agg')
+    mpl.rcParams['axes.spines.right'] = False
+    mpl.rcParams['axes.spines.top'] = False
+    mpl.rcParams['font.size'] = 16
+    mpl.rcParams['lines.linewidth'] = 2
+    mpl.rcParams['lines.markersize'] = 8
+    mpl.rcParams['axes.unicode_minus'] = False
+
+    global_cycler = cycler(color=get_colors()) + cycler(linestyle=get_linestyles())                                                               mpl.rcParams['axes.prop_cycle'] = global_cycler
 
 def setup_local(ax=None, grid=True, color="#606060",
                 spines=['left', 'bottom'], aspect_ratio=3/5):
