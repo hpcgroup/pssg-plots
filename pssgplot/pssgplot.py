@@ -95,14 +95,12 @@ class PlotEnvironment:
             }
         )
         self._sns_context.__enter__()
-        self._mpl_context.__enter__()
         sns.set_palette(resolved_palette)
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
         """ Exit context.
         """
-        self._mpl_context.__exit__(exc_type, exc_value, traceback)
         self._sns_context.__exit__(exc_type, exc_value, traceback)
         sns.set_palette(self._previous_color_palette)
 
