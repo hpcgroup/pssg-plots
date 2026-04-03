@@ -185,8 +185,6 @@ class Heatmap(Plot):
         if colorbar is not None:
             colorbar.ax.tick_params(length=0)
 
-        self.ax.tick_params(axis='both', direction='in', color='#606060')
-
         if tight_layout and isinstance(self.fig, plt.Figure):
             self.fig.tight_layout()
 
