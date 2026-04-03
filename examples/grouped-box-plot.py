@@ -1,16 +1,12 @@
 """A grouped box plot example demonstrating hue-wise animation."""
 
-import sys
 import os
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
-sys.path.append(".")
-sys.path.append("..")
-from pssgplot import PlotEnvironment
-from pssgplot.boxplot import BoxPlot
+from pssgplot import PlotEnvironment, BoxPlot
 
 with PlotEnvironment(font_path=Path("../fonts/gillsans.ttf")):
     rng = np.random.default_rng(42)
@@ -40,7 +36,7 @@ with PlotEnvironment(font_path=Path("../fonts/gillsans.ttf")):
     )
 
     os.makedirs("output", exist_ok=True)
-    grouped_box.save("output/grouped-box-plot.pdf", format="pdf")
+    grouped_box.save(Path("output/grouped-box-plot.pdf"), format="pdf")
 
     # Animate by column: each frame adds one x-group (with all conditions)
     grouped_box.animate(

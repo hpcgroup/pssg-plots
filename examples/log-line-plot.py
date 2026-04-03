@@ -1,14 +1,10 @@
 """A simple log-log line plot example"""
 
-import sys
 from pathlib import Path
 
 import pandas as pd
 
-sys.path.append(".")
-sys.path.append("..")
-from pssgplot import PlotEnvironment
-from pssgplot.lineplot import LinePlot
+from pssgplot import PlotEnvironment, LinePlot
 
 with PlotEnvironment(font_path=Path("../fonts/gillsans.ttf")):
     df = pd.DataFrame(
@@ -28,4 +24,4 @@ with PlotEnvironment(font_path=Path("../fonts/gillsans.ttf")):
 
     # Use .show or .save to output the figure
     # simple_line.show()
-    simple_line.save("output/log-line-plot.pdf", format="pdf")
+    simple_line.save(Path("output/log-line-plot.pdf"), format="pdf")

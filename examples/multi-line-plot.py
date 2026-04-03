@@ -1,11 +1,10 @@
 """ A simple line plot example """
-import sys
-sys.path.append('.')
-sys.path.append('..')
-from pssgplot import PlotEnvironment
-from pssgplot.lineplot import LinePlot
-import pandas as pd
+
 from pathlib import Path
+
+import pandas as pd
+
+from pssgplot import PlotEnvironment, LinePlot
 
 with PlotEnvironment(font_path=Path('../fonts/gillsans.ttf')):
     df = pd.DataFrame({
@@ -22,4 +21,4 @@ with PlotEnvironment(font_path=Path('../fonts/gillsans.ttf')):
 
     # Use .show or .save to output the figure
     # simple_line.show()
-    simple_line.save('output/multi-line-plot.pdf', format='pdf')
+    simple_line.save(Path('output/multi-line-plot.pdf'), format='pdf')

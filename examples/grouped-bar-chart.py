@@ -1,10 +1,10 @@
 """ A simple bar chart example """
-import sys
-sys.path.append('.')
-sys.path.append('..')
-from pssgplot import PlotEnvironment, BarPlot
-import pandas as pd
+
 from pathlib import Path
+
+import pandas as pd
+
+from pssgplot import PlotEnvironment, BarPlot
 
 with PlotEnvironment(font_path=Path('../fonts/gillsans.ttf')):
     df = pd.DataFrame({
@@ -29,4 +29,4 @@ with PlotEnvironment(font_path=Path('../fonts/gillsans.ttf')):
 
     # use .show or .save to output the figure
     #simple_bars.show()
-    simple_bars.save('output/grouped-bar-chart.pdf', format='pdf')
+    simple_bars.save(Path('output/grouped-bar-chart.pdf'), format='pdf')
