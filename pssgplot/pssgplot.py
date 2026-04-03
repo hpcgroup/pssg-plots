@@ -15,7 +15,7 @@ import seaborn as sns
 INTERACTIVE_BACKENDS = ['tkagg', 'qt5agg', 'qt6agg']
 PALETTE = ['#D55E00', '#0072B2', '#009E73', '#000000', '#800080', '#CC79A7', '#E69F00', '#56B4E9']
 HATCHES = ['xxx', '//', '|||', 'OO', '++', '**', '\\\\\\']
-MARKERS = ['^', 's', 'o', 'd', 'x', 'P']
+MARKERS = ['o', '^', 's', 'D', 'X', 'p']
 LINESTYLES = [(),                 # solid
               (1, 2),             # dotted
               (4, 2),             # dashed
