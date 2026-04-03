@@ -10,8 +10,8 @@ from pathlib import Path
 with PlotEnvironment(font_path=Path('../fonts/gillsans.ttf')):
     df = pd.DataFrame({
         "x": [0, 1, 2, 3, 4] * 3,
-        "y": [0, 2.3, 1.5, 3.6, 4.7, 1.3, 3.4, 4.5, 5.6, 6.7, 0.3, 3.4, 3.5, 7.6, 8.7],
-        "hue": ["A", "A", "A", "A", "A", "B", "B", "B", "B", "B", "C", "C", "C", "C", "C"],
+        "y": [0, 2.3, 1.5, 3.6, 4.7] + [1.3, 3.4, 4.5, 5.6, 6.7] + [0.3, 3.4, 3.5, 7.6, 8.7],
+        "hue": ["C"] * 5 + ["B"] * 5 + ["A"] * 5,
     })
 
     simple_line = LinePlot()

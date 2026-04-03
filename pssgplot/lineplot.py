@@ -128,6 +128,8 @@ class LinePlot(Plot):
 
         if legend:
             self.ax.legend(loc=legend_loc, bbox_to_anchor=legend_bbox, fontsize=legend_fontsize, ncol=legend_ncol, title=legend_title)
+        elif 'hue' in kwargs:
+            sns.move_legend(self.ax, "upper left", reverse=True)
 
         self.ax.yaxis.grid(linestyle='dotted', zorder=0)
         self.ax.spines['left'].set_color('#606060')
