@@ -4,9 +4,7 @@ import math
 from typing import Iterable, List, Optional
 
 from cycler import cycler
-import matplotlib as mpl
 from matplotlib.axes import Axes
-from matplotlib import font_manager as fm
 import matplotlib.pyplot as plt
 
 LINESTYLES_BY_NAME = {
