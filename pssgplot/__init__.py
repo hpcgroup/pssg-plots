@@ -1,5 +1,5 @@
 
-from .pssgplot import PlotEnvironment
+from .pssgplot import PlotEnvironment, PALETTE, HATCHES, LINESTYLES, MARKERS
 from .plot import Plot
 from .lineplot import LinePlot
 from .barplot import BarPlot

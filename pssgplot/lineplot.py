@@ -1,26 +1,25 @@
-from typing import Optional, Tuple
-import os
-from matplotlib.axes import Axes
-import pandas as pd
-import seaborn as sns
-from pssgplot import Plot
-
 """ Wrapper function to plot a line plot.
 """
+
 # std imports
+from typing import Optional, Tuple
+import os
 
 # tpl imports
 import matplotlib.pyplot as plt
+from matplotlib.axes import Axes
+import pandas as pd
+import seaborn as sns
 
 # local imports
-
+from pssgplot import Plot, LINESTYLES, MARKERS
 
 class LinePlot(Plot):
 
     def __init__(self):
         self._lines_data = None  # To store original line data for animation
 
-    def plot(
+    def plot(  # type: ignore[override]
         self,
         data: pd.DataFrame,
         x: str,
@@ -55,8 +54,14 @@ class LinePlot(Plot):
         self.kwargs = kwargs
 
         self.fig = plt.figure(figsize=figsize)
+
         # Create a lineplot using seaborn
-        self.ax = sns.lineplot(data=data, x=x, y=y, ax=ax, marker='o' if markers else None, **kwargs)
+        if 'style' in kwargs:
+            kwargs['dashes'] = LINESTYLES
+            kwargs['markers'] = MARKERS
+        else:
+            kwargs['marker'] = 'o' if markers else None
+        self.ax = sns.lineplot(data=data, x=x, y=y, ax=ax, **kwargs)
 
         if title is not None:
             self.ax.set_title(title, fontsize=title_fontsize)
@@ -97,9 +102,12 @@ class LinePlot(Plot):
         if legend:
             self.ax.legend(loc=legend_loc, bbox_to_anchor=legend_bbox, fontsize=legend_fontsize, ncol=legend_ncol, title=legend_title)
 
-        self.ax.yaxis.grid(linestyle='dashed', zorder=0)
+        self.ax.yaxis.grid(linestyle='dotted', zorder=0)
         self.ax.spines['left'].set_color('#606060')
         self.ax.spines['bottom'].set_color('#606060')
+
+        self.ax.tick_params(axis='both', direction='in')
+        self.ax.margins(0)
 
         if tight_layout:
             self.fig.tight_layout()

@@ -11,7 +11,7 @@ import pandas as pd
 import seaborn as sns
 
 # local imports
-from pssgplot import Plot
+from pssgplot import Plot, HATCHES
 
 
 class BoxPlot(Plot):
@@ -92,29 +92,14 @@ class BoxPlot(Plot):
                 legend_kwargs["ncol"] = legend_ncol
             self.ax.legend(**legend_kwargs)
 
-        self.ax.yaxis.grid(linestyle="dashed", zorder=0)
+        self.ax.yaxis.grid(linestyle="dotted", zorder=0)
         self.ax.spines["left"].set_color("#606060")
         self.ax.spines["bottom"].set_color("#606060")
 
+        self.ax.tick_params(axis='both', direction='in')
+
         if hatch:
-            hatches = hatches or [
-                "x",
-                "xxx",
-                "\\\\",
-                "||",
-                "///",
-                "+",
-                "o",
-                ".",
-                "*",
-                "-",
-                "ooo",
-                "+++",
-                "...",
-                "---",
-                "xx",
-                "++",
-            ]
+            hatches = hatches or HATCHES
 
             if "hue" in kwargs:
                 n_groups = len(data[kwargs["hue"]].unique())

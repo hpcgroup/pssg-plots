@@ -182,6 +182,8 @@ class Heatmap(Plot):
         self.ax.spines['left'].set_color('#606060')
         self.ax.spines['bottom'].set_color('#606060')
 
+        self.ax.tick_params(axis='both', direction='in')
+
         if tight_layout and isinstance(self.fig, plt.Figure):
             self.fig.tight_layout()
 
