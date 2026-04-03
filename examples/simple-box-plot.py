@@ -1,16 +1,11 @@
 """A simple box plot example"""
 
-import sys
-import os
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
-sys.path.append(".")
-sys.path.append("..")
-from pssgplot import PlotEnvironment
-from pssgplot.boxplot import BoxPlot
+from pssgplot import PlotEnvironment, BoxPlot
 
 with PlotEnvironment(font_path=Path("../fonts/gillsans.ttf")):
     df = pd.DataFrame(
@@ -29,5 +24,5 @@ with PlotEnvironment(font_path=Path("../fonts/gillsans.ttf")):
     )
 
     # Use .show or .save to output the figure
-    os.makedirs("output", exist_ok=True)
-    simple_box.save("output/simple-box-plot.pdf", format="pdf")
+    #simple_box.show()
+    simple_box.save(Path("output/simple-box-plot.pdf"), format="pdf")

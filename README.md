@@ -23,7 +23,7 @@ with PlotEnvironment():
 
     # animate bar-by-bar or group-by-group to use in slides
     chart.animate(by='column', save_dir='output')
-    
+
     chart.save('output/simple-bar-chart.png')
 ```
 
@@ -36,6 +36,7 @@ uv venv
 source .venv/bin/activate
 
 uv pip install -e pssg-plots/
+# Alternatively, do uv sync to use the exact dependencies in uv.lock
 
 uv run plotting-script.py
 ```

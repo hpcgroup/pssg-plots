@@ -3,7 +3,7 @@
 # std imports
 from os import PathLike
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import List, Optional, Tuple, Union
 import warnings
 
 # tpl imports
@@ -13,7 +13,16 @@ import seaborn as sns
 
 
 INTERACTIVE_BACKENDS = ['tkagg', 'qt5agg', 'qt6agg']
-
+PALETTE = ['#D55E00', '#0072B2', '#009E73', '#000000', '#800080', '#CC79A7', '#E69F00', '#56B4E9']
+HATCHES = ['xxx', '//', '|||', 'OO', '++', '**', '\\\\\\']
+MARKERS = ['o', '^', 's', 'D', 'X', 'p']
+LINESTYLES = [(),                 # solid
+              (1, 2),             # dotted
+              (4, 2),             # dashed
+              (3, 1, 1, 1),       # densely dashdotted
+              (3, 1, 1, 1, 1, 1), # densely dashdotdotted
+              (5, 1),             # densely dashed
+              (7, 2, 1, 2)]       # dashdot
 
 class PlotEnvironment:
     """ PSSG plot environment.
@@ -21,14 +30,14 @@ class PlotEnvironment:
 
     _font_name: Optional[str] = None
     _font_scale: float = 1.0
-    _color_palette: Optional[Union[str, List[str]]] = None
+    _color_palette: Union[str, List[str], List[Tuple[float, float, float]], None] = None
 
     def __init__(
         self,
         font_name: Optional[str] = None,
         font_path: Optional[PathLike] = None,
         font_scale: float = 1.0,
-        color_palette: Optional[Union[str, List[str]]] = None,
+        color_palette: Union[str, List[str], List[Tuple[float, float, float]], None] = None,
         interactive: bool = False,
         backend: Optional[str] = None,
     ):
@@ -70,7 +79,7 @@ class PlotEnvironment:
 
         self._font_name = font_name or "sans-serif"
         self._font_scale = font_scale
-        self._color_palette = color_palette or sns.color_palette(['#D55E00', '#0072B2', '#009E73', '#000000', '#800080', '#CC79A7', '#E69F00', '#56B4E9'], 8)
+        self._color_palette = color_palette or sns.color_palette(PALETTE, len(PALETTE))
         self._interactive = interactive
 
 
@@ -86,6 +95,7 @@ class PlotEnvironment:
                 'lines.linewidth': 2,
                 'lines.markersize': 8,
                 'font.family': self._font_name,
+                'hatch.linewidth': 0.5,
             }
         )
         self._sns_context.__enter__()
@@ -103,7 +113,7 @@ class PlotEnvironment:
         fontManager.addfont(font_path)
         return FontProperties(fname=font_path).get_name()
 
-    def _resolve_font(self, font_name: Optional[str], font_path: Optional[str]) -> str:
+    def _resolve_font(self, font_name: Optional[str], font_path: Optional[PathLike]) -> str:
         """ Resolves the font to use for plotting.
             If neither font_name nor font_path is specified, look for the Gill Sans MT or Gill Sans font packaged with this library.
                 If it is not found, look for a systems Gill Sans or Gill Sans MT font. If it is still not found, print a warning and use the default font.

@@ -1,17 +1,18 @@
 """Wrapper function to plot a boxplot."""
 
 # std imports
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Union
 import os
 
 # tpl imports
 import matplotlib.pyplot as plt
 from matplotlib.axes import Axes
+import numpy as np
 import pandas as pd
 import seaborn as sns
 
 # local imports
-from pssgplot import Plot
+from pssgplot import Plot, HATCHES
 
 
 class BoxPlot(Plot):
@@ -24,6 +25,8 @@ class BoxPlot(Plot):
         x: str,
         y: str,
         hatch: bool = True,
+        linewidth: float = 1,
+        gap: float = 0.1,
         hatches: Optional[list[str]] = None,
         title: Optional[str] = None,
         title_fontsize: Optional[int] = None,
@@ -33,8 +36,8 @@ class BoxPlot(Plot):
         ylabel_fontsize: Optional[int] = None,
         logx: Optional[int] = None,
         logy: Optional[int] = None,
-        xlim: Optional[Tuple[Optional[float], Optional[float]]] = None,
-        ylim: Optional[Tuple[Optional[float], Optional[float]]] = None,
+        xlim: Union[Tuple[float, float], float, None] = None,
+        ylim: Union[Tuple[float, float], float, None] = None,
         error: Optional[str] = None,
         label_fontsize: Optional[int] = None,
         label_fmt: str = "{:.1f}",
@@ -55,7 +58,16 @@ class BoxPlot(Plot):
         self.kwargs = kwargs
 
         self.fig = plt.figure(figsize=figsize)
-        self.ax = sns.boxplot(data=data, x=x, y=y, ax=ax, zorder=3, **kwargs)
+        self.ax = sns.boxplot(
+            data=data,
+            x=x,
+            y=y,
+            ax=ax,
+            zorder=3,
+            linewidth=linewidth,
+            gap=gap,
+            **kwargs,
+        )
 
         if title is not None:
             self.ax.set_title(title, fontsize=title_fontsize)
@@ -77,6 +89,16 @@ class BoxPlot(Plot):
 
         if ylim is not None:
             self.ax.set_ylim(ylim)
+        else:
+            ylim = self.ax.get_ylim()
+            yticks = self.ax.get_yticks()
+            tick_step = yticks[1] - yticks[0]
+            tick_list = self.ax.get_yticks()
+            if yticks[-1] < ylim[1]:
+                tick_list = np.append(tick_list, yticks[-1] + tick_step)
+            if yticks[0] > ylim[0]:
+                tick_list = np.insert(tick_list, 0, yticks[0] - tick_step)
+            self.ax.set_yticks(tick_list)
 
         # Note: error bars are not added for box plots, since the box itself
         # already visualizes data spread (quartiles, whiskers, outliers).
@@ -91,30 +113,16 @@ class BoxPlot(Plot):
             if legend_ncol is not None:
                 legend_kwargs["ncol"] = legend_ncol
             self.ax.legend(**legend_kwargs)
+        leg_obj = self.ax.get_legend()
 
-        self.ax.yaxis.grid(linestyle="dashed", zorder=0)
+        self.ax.yaxis.grid(linestyle="dotted", zorder=0)
         self.ax.spines["left"].set_color("#606060")
         self.ax.spines["bottom"].set_color("#606060")
 
+        self.ax.tick_params(axis='both', direction='in', color='#606060')
+
         if hatch:
-            hatches = hatches or [
-                "x",
-                "xxx",
-                "\\\\",
-                "||",
-                "///",
-                "+",
-                "o",
-                ".",
-                "*",
-                "-",
-                "ooo",
-                "+++",
-                "...",
-                "---",
-                "xx",
-                "++",
-            ]
+            hatches = hatches or HATCHES
 
             if "hue" in kwargs:
                 n_groups = len(data[kwargs["hue"]].unique())
@@ -127,20 +135,16 @@ class BoxPlot(Plot):
                 bar.set_hatch(hatches[i // group_size])
                 bar.set_edgecolor("k")
 
-            if "hue" in kwargs:
-                legend = self.ax.get_legend()
-                if legend is not None:
-                    for i, p in enumerate(legend.get_patches()):
-                        p.set_hatch(hatches[i % n_groups])
-                        p.set_edgecolor('k')
+            if "hue" in kwargs and leg_obj is not None:
+                for i, p in enumerate(leg_obj.get_patches()):
+                    p.set_hatch(hatches[i % n_groups])
+                    p.set_edgecolor('k')
 
         if tight_layout:
             self.fig.tight_layout()
 
-        if legend_title is not None:
-            legend = self.ax.get_legend()
-            if legend is not None:
-                legend.set_title(legend_title)
+        if legend_title is not None and leg_obj is not None:
+            leg_obj.set_title(legend_title)
 
         return self.ax
 

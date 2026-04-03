@@ -1,10 +1,10 @@
 """ A simple heatmap example """
-import sys
-sys.path.append('.')
-sys.path.append('..')
-from pssgplot import PlotEnvironment, Heatmap
-import pandas as pd
+
 from pathlib import Path
+
+import pandas as pd
+
+from pssgplot import PlotEnvironment, Heatmap
 
 with PlotEnvironment(font_path=Path('../fonts/gillsans.ttf')):
     df = pd.DataFrame({
@@ -37,4 +37,4 @@ with PlotEnvironment(font_path=Path('../fonts/gillsans.ttf')):
 
     # use .show or .save to output the figure
     # hm.show()
-    hm.save('output/simple-heatmap.pdf', format='pdf')
+    hm.save(Path('output/simple-heatmap.pdf'), format='pdf')

@@ -1,31 +1,32 @@
-from typing import Optional, Tuple
-import os
-from matplotlib.axes import Axes
-import pandas as pd
-import seaborn as sns
-from pssgplot import Plot
-
 """ Wrapper function to plot a line plot.
 """
+
 # std imports
+from typing import Optional, Tuple, Union
+import os
 
 # tpl imports
 import matplotlib.pyplot as plt
+from matplotlib.axes import Axes
+import numpy as np
+import pandas as pd
+import seaborn as sns
 
 # local imports
-
+from pssgplot import Plot, LINESTYLES, MARKERS
 
 class LinePlot(Plot):
 
     def __init__(self):
         self._lines_data = None  # To store original line data for animation
 
-    def plot(
+    def plot(  # type: ignore[override]
         self,
         data: pd.DataFrame,
         x: str,
         y: str,
         markers: bool = True,
+        markeredgewidth: float = 0,
         title: Optional[str] = None,
         title_fontsize: Optional[int] = None,
         xlabel: Optional[str] = None,
@@ -34,8 +35,8 @@ class LinePlot(Plot):
         ylabel_fontsize: Optional[int] = None,
         logx: Optional[int] = None,
         logy: Optional[int] = None,
-        xlim: Optional[Tuple[Optional[float], Optional[float]]] = None,
-        ylim: Optional[Tuple[Optional[float], Optional[float]]] = None,
+        xlim: Union[Tuple[float, float], float, None] = None,
+        ylim: Union[Tuple[float, float], float, None] = None,
         error: Optional[str] = None,
         legend: bool = False,
         legend_title: Optional[str] = None,
@@ -55,8 +56,16 @@ class LinePlot(Plot):
         self.kwargs = kwargs
 
         self.fig = plt.figure(figsize=figsize)
+
         # Create a lineplot using seaborn
-        self.ax = sns.lineplot(data=data, x=x, y=y, ax=ax, marker='o' if markers else None, **kwargs)
+        if 'style' in kwargs:
+            kwargs['dashes'] = LINESTYLES
+            kwargs['markers'] = MARKERS
+        else:
+            kwargs['marker'] = 'o' if markers else None
+        self.ax = sns.lineplot(
+            data=data, x=x, y=y, ax=ax, markeredgewidth=markeredgewidth, **kwargs
+        )
 
         if title is not None:
             self.ax.set_title(title, fontsize=title_fontsize)
@@ -73,11 +82,34 @@ class LinePlot(Plot):
         if logy is not None:
             self.ax.set_yscale('log', base=logy)
 
+        # Need to trim margins before adjusting ticks to avoid dropping ticks
+        self.ax.margins(0)
+
         if xlim is not None:
             self.ax.set_xlim(xlim)
+        else:
+            xlim = self.ax.get_xlim()
+            xticks = self.ax.get_xticks()
+            tick_step = xticks[1] - xticks[0]
+            tick_list = self.ax.get_xticks()
+            if xticks[-1] < xlim[1]:
+                tick_list = np.append(tick_list, xticks[-1] + tick_step)
+            if xticks[0] > xlim[0]:
+                tick_list = np.insert(tick_list, 0, xticks[0] - tick_step)
+            self.ax.set_xticks(tick_list)
 
         if ylim is not None:
             self.ax.set_ylim(ylim)
+        else:
+            ylim = self.ax.get_ylim()
+            yticks = self.ax.get_yticks()
+            tick_step = yticks[1] - yticks[0]
+            tick_list = self.ax.get_yticks()
+            if yticks[-1] < ylim[1]:
+                tick_list = np.append(tick_list, yticks[-1] + tick_step)
+            if yticks[0] > ylim[0]:
+                tick_list = np.insert(tick_list, 0, yticks[0] - tick_step)
+            self.ax.set_yticks(tick_list)
 
         if error is not None:
             if error not in data.columns:
@@ -96,27 +128,32 @@ class LinePlot(Plot):
 
         if legend:
             self.ax.legend(loc=legend_loc, bbox_to_anchor=legend_bbox, fontsize=legend_fontsize, ncol=legend_ncol, title=legend_title)
+        elif 'hue' in kwargs:
+            sns.move_legend(self.ax, "upper left", reverse=True)
+        leg_obj = self.ax.get_legend()
 
-        self.ax.yaxis.grid(linestyle='dashed', zorder=0)
+        self.ax.yaxis.grid(linestyle='dotted', zorder=0)
         self.ax.spines['left'].set_color('#606060')
         self.ax.spines['bottom'].set_color('#606060')
+
+        self.ax.tick_params(axis='both', direction='in', color='#606060')
 
         if tight_layout:
             self.fig.tight_layout()
 
-        if legend_title is not None and self.ax.get_legend():
-            self.ax.get_legend().set_title(legend_title)
+        if legend_title is not None and leg_obj is not None:
+            leg_obj.set_title(legend_title)
 
         # Store original data from the lines for animation
         self._lines_data = []
         for line in self.ax.get_lines():
             # Copy the full data for each line
-            xdata = line.get_xdata().copy()
-            ydata = line.get_ydata().copy()
+            xdata = np.array(line.get_xdata()).copy()
+            ydata = np.array(line.get_ydata()).copy()
             self._lines_data.append((xdata, ydata))
         return self.ax
 
-    def animate(self, by: str, save_dir: os.PathLike, left_to_right: bool = True, frame_format: str = 'pdf', **kwargs):
+    def animate(self, by: str, save_dir: os.PathLike, left_to_right: bool = True, frame_format: str = 'pdf', **kwargs):  # type: ignore[override]
         """
         Animate the line plot. Produces a frame for each animation step.
         There are two animation modes:
