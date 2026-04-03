@@ -9,18 +9,42 @@ from matplotlib.axes import Axes
 from matplotlib import font_manager as fm
 import matplotlib.pyplot as plt
 
+LINESTYLES_BY_NAME = {
+     'solid': 'solid',      # Same as (0, ()) or '-'
+     'dotted': 'dotted',    # Same as ':'
+     'dashed': 'dashed',    # Same as '--'
+     'dashdot': 'dashdot',  # Same as '-.'
+     'loosely dotted':        (0, (1, 10)),
+     'dotted':                (0, (1, 5)),
+     'densely dotted':        (0, (1, 1)),
 
-PSSG_COLORS = ["#D55E00", "#0072B2", "#009E73", "#000000", "#800080", "#CC79A7", "#E69F00", "56B4E9"]
-PSSG_BAR_COLORS = [c in PSSG_COLORS if c != "#000000"]
+     'long dash with offset': (5, (10, 3)),
+     'loosely dashed':        (0, (5, 10)),
+     'dashed':                (0, (5, 5)),
+     'densely dashed':        (0, (5, 1)),
 
-PSSG_LINESTYLES = [
+     'loosely dashdotted':    (0, (3, 10, 1, 10)),
+     'dashdotted':            (0, (3, 5, 1, 5)),
+     'densely dashdotted':    (0, (3, 1, 1, 1)),
+
+     'dashdotdotted':         (0, (3, 5, 1, 5, 1, 5)),
+     'loosely dashdotdotted': (0, (3, 10, 1, 10, 1, 10)),
+     'densely dashdotdotted': (0, (3, 1, 1, 1, 1, 1))}
+
+
+PSSG_COLORS = ["#D55E00", "#0072B2", "#009E73", "#000000", "#800080", "#CC79A7", "#E69F00", "#56B4E9"]
+PSSG_BAR_COLORS = [c for c in PSSG_COLORS if c != "#000000"]
+
+PSSG_LINESTYLE_NAMES = [
     "solid",
     "dotted",
     "dashed",
+    "densely dashdotted",
+    "densely dashdotdotted",
+    "densely dashed",
     "dashdot",
-    (0, (3, 5, 1, 5, 1, 5)),
-    (0, (3, 10, 1, 10, 1, 10)),
 ]
+PSSG_LINESTYLES = [LINESTYLES_BY_NAME[n] for n in PSSG_LINESTYLE_NAMES]
 
 PSSG_MARKERS = [
     "^",
@@ -38,7 +62,7 @@ PSSG_HATCHES = [
     "OO",
     "++",
     "**",
-    "\\\",
+    "\\\\",
 ]
 
 
