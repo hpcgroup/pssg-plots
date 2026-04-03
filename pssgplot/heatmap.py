@@ -161,8 +161,8 @@ class Heatmap(Plot):
 
         sns.heatmap(self.data, ax=self.ax, **heatmap_kwargs, **kwargs)
 
+        colorbar = self.ax.collections[0].colorbar if cbar else None
         if cbar and (cbar_label is not None or cbar_ticklabels is not None):
-            colorbar = self.ax.collections[0].colorbar
             if colorbar is None:
                 raise ValueError("Colorbar not found.")
             if cbar_label is not None:
@@ -181,6 +181,9 @@ class Heatmap(Plot):
 
         self.ax.spines['left'].set_color('#606060')
         self.ax.spines['bottom'].set_color('#606060')
+        self.ax.tick_params(axis='both', direction='in', length=0)
+        if colorbar is not None:
+            colorbar.ax.tick_params(length=0)
 
         if tight_layout and isinstance(self.fig, plt.Figure):
             self.fig.tight_layout()
