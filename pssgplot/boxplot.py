@@ -7,6 +7,7 @@ import os
 # tpl imports
 import matplotlib.pyplot as plt
 from matplotlib.axes import Axes
+import numpy as np
 import pandas as pd
 import seaborn as sns
 
@@ -24,6 +25,8 @@ class BoxPlot(Plot):
         x: str,
         y: str,
         hatch: bool = True,
+        linewidth: float = 1,
+        gap: float = 0.1,
         hatches: Optional[list[str]] = None,
         title: Optional[str] = None,
         title_fontsize: Optional[int] = None,
@@ -55,7 +58,16 @@ class BoxPlot(Plot):
         self.kwargs = kwargs
 
         self.fig = plt.figure(figsize=figsize)
-        self.ax = sns.boxplot(data=data, x=x, y=y, ax=ax, zorder=3, **kwargs)
+        self.ax = sns.boxplot(
+            data=data,
+            x=x,
+            y=y,
+            ax=ax,
+            zorder=3,
+            linewidth=linewidth,
+            gap=gap,
+            **kwargs,
+        )
 
         if title is not None:
             self.ax.set_title(title, fontsize=title_fontsize)
@@ -77,6 +89,16 @@ class BoxPlot(Plot):
 
         if ylim is not None:
             self.ax.set_ylim(ylim)
+        else:
+            ylim = self.ax.get_ylim()
+            yticks = self.ax.get_yticks()
+            tick_step = yticks[1] - yticks[0]
+            tick_list = self.ax.get_yticks()
+            if yticks[-1] < ylim[1]:
+                tick_list = np.append(tick_list, yticks[-1] + tick_step)
+            if yticks[0] > ylim[0]:
+                tick_list = np.insert(tick_list, 0, yticks[0] - tick_step)
+            self.ax.set_yticks(tick_list)
 
         # Note: error bars are not added for box plots, since the box itself
         # already visualizes data spread (quartiles, whiskers, outliers).

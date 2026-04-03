@@ -95,6 +95,7 @@ class PlotEnvironment:
                 'lines.linewidth': 2,
                 'lines.markersize': 8,
                 'font.family': self._font_name,
+                'hatch.linewidth': 0.5,
             }
         )
         self._sns_context.__enter__()

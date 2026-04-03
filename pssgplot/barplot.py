@@ -60,7 +60,17 @@ class BarPlot(Plot):
         self.kwargs = kwargs
 
         self.fig = plt.figure(figsize=figsize)
-        self.ax = sns.barplot(data=data, x=x, y=y, ax=ax, zorder=3, linewidth=linewidth, edgecolor=edgecolor, gap=gap, **kwargs)
+        self.ax = sns.barplot(
+            data=data,
+            x=x,
+            y=y,
+            ax=ax,
+            zorder=3,
+            linewidth=linewidth,
+            edgecolor=edgecolor,
+            gap=gap,
+            **kwargs
+        )
 
         if title is not None:
             self.ax.set_title(title, fontsize=title_fontsize)
@@ -84,19 +94,13 @@ class BarPlot(Plot):
             self.ax.set_ylim(ylim)
         else:
             ylim = self.ax.get_ylim()
-            print(ylim)
             yticks = self.ax.get_yticks()
-            print(yticks)
-            highest_tick = yticks[-1]
-            lowest_tick = yticks[0]
             tick_step = yticks[1] - yticks[0]
             tick_list = self.ax.get_yticks()
-            if highest_tick < ylim[1]:
-                print(f"Adding tick {highest_tick + tick_step}")
-                tick_list = np.append(tick_list, highest_tick + tick_step)
-            if lowest_tick > ylim[0]:
-                print(f"Adding tick {lowest_tick - tick_step}")
-                tick_list = np.insert(tick_list, 0, lowest_tick - tick_step)
+            if yticks[-1] < ylim[1]:
+                tick_list = np.append(tick_list, yticks[-1] + tick_step)
+            if yticks[0] > ylim[0]:
+                tick_list = np.insert(tick_list, 0, yticks[0] - tick_step)
             self.ax.set_yticks(tick_list)
 
         if error is not None:

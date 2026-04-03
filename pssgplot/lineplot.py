@@ -8,6 +8,7 @@ import os
 # tpl imports
 import matplotlib.pyplot as plt
 from matplotlib.axes import Axes
+import numpy as np
 import pandas as pd
 import seaborn as sns
 
@@ -25,6 +26,7 @@ class LinePlot(Plot):
         x: str,
         y: str,
         markers: bool = True,
+        markeredgewidth: float = 0,
         title: Optional[str] = None,
         title_fontsize: Optional[int] = None,
         xlabel: Optional[str] = None,
@@ -61,7 +63,9 @@ class LinePlot(Plot):
             kwargs['markers'] = MARKERS
         else:
             kwargs['marker'] = 'o' if markers else None
-        self.ax = sns.lineplot(data=data, x=x, y=y, ax=ax, **kwargs)
+        self.ax = sns.lineplot(
+            data=data, x=x, y=y, ax=ax, markeredgewidth=markeredgewidth, **kwargs
+        )
 
         if title is not None:
             self.ax.set_title(title, fontsize=title_fontsize)
@@ -78,11 +82,34 @@ class LinePlot(Plot):
         if logy is not None:
             self.ax.set_yscale('log', base=logy)
 
+        # Need to trim margins before adjusting ticks to avoid dropping ticks
+        self.ax.margins(0)
+
         if xlim is not None:
             self.ax.set_xlim(xlim)
+        else:
+            xlim = self.ax.get_xlim()
+            xticks = self.ax.get_xticks()
+            tick_step = xticks[1] - xticks[0]
+            tick_list = self.ax.get_xticks()
+            if xticks[-1] < xlim[1]:
+                tick_list = np.append(tick_list, xticks[-1] + tick_step)
+            if xticks[0] > xlim[0]:
+                tick_list = np.insert(tick_list, 0, xticks[0] - tick_step)
+            self.ax.set_xticks(tick_list)
 
         if ylim is not None:
             self.ax.set_ylim(ylim)
+        else:
+            ylim = self.ax.get_ylim()
+            yticks = self.ax.get_yticks()
+            tick_step = yticks[1] - yticks[0]
+            tick_list = self.ax.get_yticks()
+            if yticks[-1] < ylim[1]:
+                tick_list = np.append(tick_list, yticks[-1] + tick_step)
+            if yticks[0] > ylim[0]:
+                tick_list = np.insert(tick_list, 0, yticks[0] - tick_step)
+            self.ax.set_yticks(tick_list)
 
         if error is not None:
             if error not in data.columns:
@@ -107,7 +134,6 @@ class LinePlot(Plot):
         self.ax.spines['bottom'].set_color('#606060')
 
         self.ax.tick_params(axis='both', direction='in', color='#606060')
-        self.ax.margins(0)
 
         if tight_layout:
             self.fig.tight_layout()
