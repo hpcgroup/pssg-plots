@@ -85,22 +85,13 @@ class PlotEnvironment:
         resolved_palette = sns.color_palette(self._color_palette)
         self._previous_color_palette = sns.color_palette()
         self._sns_context = sns.plotting_context(
-            font_scale=self._font_scale
-        )
-        self._mpl_context = mpl.rc_context(
-            rc={
-                "font.family": self._font_name,
-                "axes.spines.right": False,
-                "axes.spines.top": False,
-                "lines.linewidth": 2,
-                "lines.markersize": 8,
-                "axes.grid": True,
-                "axes.grid.axis": "y",
-                "grid.linestyle": "dotted",
-                "axes.edgecolor": "#606060",
-                "axes.axisbelow": True,
-                "legend.labelspacing": 0.1,
-                "axes.prop_cycle": make_prop_cycle(colors=resolved_palette),
+            font_scale=self._font_scale,
+            context={
+                'axes.spines.right': False,
+                'axes.spines.top': False,
+                'lines.linewidth': 2,
+                'lines.markersize': 8,
+                'font.family': self._font_name,
             }
         )
         self._sns_context.__enter__()

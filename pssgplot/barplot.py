@@ -19,7 +19,7 @@ class BarPlot(Plot):
 
     def __init__(self):
         pass
-    
+
     def plot(
         self,
         data: pd.DataFrame,
@@ -61,22 +61,30 @@ class BarPlot(Plot):
 
         if title is not None:
             self.ax.set_title(title, fontsize=title_fontsize)
-        
+
         if xlabel is not None:
             self.ax.set_xlabel(xlabel, fontsize=xlabel_fontsize)
-        
+
         if ylabel is not None:
             self.ax.set_ylabel(ylabel, fontsize=ylabel_fontsize)
 
         if logx is not None:
-            self.ax.set_xscale('log', basex=logx)
+<<<<<<< Updated upstream
+            self.ax.set_xscale('log', base=logx)
         
         if logy is not None:
-            self.ax.set_yscale('log', basey=logy)
+            self.ax.set_yscale('log', base=logy)
         
+=======
+            self.ax.set_xscale('log', basex=logx)
+
+        if logy is not None:
+            self.ax.set_yscale('log', basey=logy)
+
+>>>>>>> Stashed changes
         if xlim is not None:
             self.ax.set_xlim(xlim)
-        
+
         if ylim is not None:
             self.ax.set_ylim(ylim)
 
@@ -96,7 +104,7 @@ class BarPlot(Plot):
 
         if legend:
             self.ax.legend(loc=legend_loc, bbox_to_anchor=legend_bbox, fontsize=legend_fontsize, ncol=legend_ncol, title=legend_title)
-            
+
 
         apply_axes_style(self.ax)
 
@@ -116,7 +124,7 @@ class BarPlot(Plot):
 
         if hatch:
             hatches = get_hatches()
-            
+
             if 'hue' in kwargs:
                 n_groups = len(data[kwargs['hue']].unique())
                 group_size = len(data[x].unique())

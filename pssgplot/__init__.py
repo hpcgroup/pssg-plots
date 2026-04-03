@@ -1,7 +1,9 @@
 from .pssgplot import PlotEnvironment
 from .plot import Plot
-from .barplot import BarPlot
 from .lineplot import LinePlot
+from .barplot import BarPlot
+from .heatmap import Heatmap
+from .boxplot import BoxPlot
 from .style import (
     apply_axes_style,
     get_colors,
