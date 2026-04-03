@@ -9,9 +9,6 @@ import matplotlib.pyplot as plt
 
 LINESTYLES_BY_NAME = {
      'solid': 'solid',      # Same as (0, ()) or '-'
-     'dotted': 'dotted',    # Same as ':'
-     'dashed': 'dashed',    # Same as '--'
-     'dashdot': 'dashdot',  # Same as '-.'
      'loosely dotted':        (0, (1, 10)),
      'dotted':                (0, (1, 5)),
      'densely dotted':        (0, (1, 1)),
@@ -40,7 +37,7 @@ PSSG_LINESTYLE_NAMES = [
     "densely dashdotted",
     "densely dashdotdotted",
     "densely dashed",
-    "dashdot",
+    "dashdotted",
 ]
 PSSG_LINESTYLES = [LINESTYLES_BY_NAME[n] for n in PSSG_LINESTYLE_NAMES]
 
