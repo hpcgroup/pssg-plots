@@ -11,6 +11,9 @@ from matplotlib.font_manager import FontProperties, fontManager
 import matplotlib as mpl
 import seaborn as sns
 
+# local imports
+from .style import get_colors, make_prop_cycle
+
 
 INTERACTIVE_BACKENDS = ['tkagg', 'qt5agg', 'qt6agg']
 
@@ -31,6 +34,7 @@ class PlotEnvironment:
         color_palette: Optional[Union[str, List[str]]] = None,
         interactive: bool = False,
         backend: Optional[str] = None,
+        plot_type: Optional[str] = "line",
     ):
         """ Initialize PSSG plot environment.
 
@@ -42,6 +46,7 @@ class PlotEnvironment:
             color_palette (Union[str, List[str]], optional): Color palette to use. Defaults to None.
             interactive (bool, optional): If True, uses matplotlib backend 'Agg', 'TkAgg', 'QtAgg' to enable interactive plots. Defaults to False.
             backend (str, optional): Name of backend to use. Defaults to None.
+            plot_type (str, optional): Plot type used to select the default color palette. Valid values include 'line' and 'bar'. Defaults to "line".
 
         Raises:
 
@@ -70,13 +75,16 @@ class PlotEnvironment:
 
         self._font_name = font_name or "sans-serif"
         self._font_scale = font_scale
-        self._color_palette = color_palette or sns.color_palette(['#D55E00', '#0072B2', '#009E73', '#000000', '#800080', '#CC79A7', '#E69F00', '#56B4E9'], 8)
+        self._color_palette = color_palette or get_colors(
+            plot_type=plot_type,
+        )
         self._interactive = interactive
 
 
     def __enter__(self):
         """ Enter context.
         """
+        resolved_palette = sns.color_palette(self._color_palette)
         self._previous_color_palette = sns.color_palette()
         self._sns_context = sns.plotting_context(
             font_scale=self._font_scale,
@@ -89,7 +97,7 @@ class PlotEnvironment:
             }
         )
         self._sns_context.__enter__()
-        sns.set_palette(self._color_palette)
+        sns.set_palette(resolved_palette)
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):

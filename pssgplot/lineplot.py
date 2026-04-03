@@ -3,7 +3,8 @@ import os
 from matplotlib.axes import Axes
 import pandas as pd
 import seaborn as sns
-from pssgplot import Plot
+from .plot import Plot
+from .style import apply_axes_style
 
 """ Wrapper function to plot a line plot.
 """
@@ -97,9 +98,7 @@ class LinePlot(Plot):
         if legend:
             self.ax.legend(loc=legend_loc, bbox_to_anchor=legend_bbox, fontsize=legend_fontsize, ncol=legend_ncol, title=legend_title)
 
-        self.ax.yaxis.grid(linestyle='dashed', zorder=0)
-        self.ax.spines['left'].set_color('#606060')
-        self.ax.spines['bottom'].set_color('#606060')
+        apply_axes_style(self.ax)
 
         if tight_layout:
             self.fig.tight_layout()

@@ -7,19 +7,19 @@ import os
 # tpl imports
 import matplotlib.pyplot as plt
 from matplotlib.axes import Axes
-import matplotlib.animation as animation
 import pandas as pd
 import seaborn as sns
 
 # local imports
-from pssgplot import Plot
+from .plot import Plot
+from .style import apply_axes_style, get_hatches
 
 
 class BarPlot(Plot):
 
     def __init__(self):
         pass
-    
+
     def plot(
         self,
         data: pd.DataFrame,
@@ -61,22 +61,22 @@ class BarPlot(Plot):
 
         if title is not None:
             self.ax.set_title(title, fontsize=title_fontsize)
-        
+
         if xlabel is not None:
             self.ax.set_xlabel(xlabel, fontsize=xlabel_fontsize)
-        
+
         if ylabel is not None:
             self.ax.set_ylabel(ylabel, fontsize=ylabel_fontsize)
 
         if logx is not None:
             self.ax.set_xscale('log', base=logx)
-        
+
         if logy is not None:
             self.ax.set_yscale('log', base=logy)
-        
+
         if xlim is not None:
             self.ax.set_xlim(xlim)
-        
+
         if ylim is not None:
             self.ax.set_ylim(ylim)
 
@@ -96,11 +96,9 @@ class BarPlot(Plot):
 
         if legend:
             self.ax.legend(loc=legend_loc, bbox_to_anchor=legend_bbox, fontsize=legend_fontsize, ncol=legend_ncol, title=legend_title)
-            
 
-        self.ax.yaxis.grid(linestyle='dashed', zorder=0)
-        self.ax.spines['left'].set_color('#606060')
-        self.ax.spines['bottom'].set_color('#606060')
+
+        apply_axes_style(self.ax)
 
         if labels is not None:
             for p in self.ax.patches:
@@ -117,8 +115,8 @@ class BarPlot(Plot):
                 )
 
         if hatch:
-            hatches = ['x', 'xxx', '\\\\', '||','///', '+', 'o', '.', '*', '-', 'ooo', '+++', '...', '---',  'xx', '++']
-            
+            hatches = get_hatches()
+
             if 'hue' in kwargs:
                 n_groups = len(data[kwargs['hue']].unique())
                 group_size = len(data[x].unique())
@@ -127,18 +125,20 @@ class BarPlot(Plot):
                 group_size = 1
 
             for i, bar in enumerate(self.ax.patches):
-                bar.set_hatch(hatches[i // group_size])
+                hatch_idx = (i // group_size) % len(hatches)
+                bar.set_hatch(hatches[hatch_idx])
                 bar.set_edgecolor('k')
 
-            if 'hue' in kwargs:
-                for i, p in enumerate(self.ax.get_legend().get_patches()):
-                    p.set_hatch(hatches[i % n_groups])
+            legend = self.ax.get_legend()
+            if 'hue' in kwargs and legend is not None:
+                for i, p in enumerate(legend.get_patches()):
+                    p.set_hatch(hatches[i % n_groups % len(hatches)])
                     p.set_edgecolor('k')
 
         if tight_layout:
             self.fig.tight_layout()
 
-        if legend_title is not None:
+        if legend_title is not None and self.ax.get_legend() is not None:
             self.ax.get_legend().set_title(legend_title)
 
         return self.ax

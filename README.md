@@ -42,9 +42,16 @@ uv run plotting-script.py
 
 You can also just use vanilla pip and virtualenvs if you'd like.
 
+## Use Global PSSG Style with Matplotlib
+
+You can use `PlotEnvironment` without pssgplots functionalities such as `BarPlot` and `LinePlot`, and still get PSSG global styling.
+
+If you need axis-level styling on demand, `pssgplot.apply_axes_style(ax)` is also available.
+
 ## Examples
 
 For more details and demos, check out the example files:
 - [Simple Bar Chart](examples/simple-bar-chart.py)
 - [Grouped Bar Chart](examples/grouped-bar-chart.py)
 - [Simple Line Plot](examples/simple-line-plot.py)
+- [Matplotlib Global Style Simple Line Plot](examples/simple-line-plot-matplotlib.py)
