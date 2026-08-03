@@ -132,11 +132,11 @@ class LinePlot(Plot):
             sns.move_legend(self.ax, "upper left", reverse=True)
         leg_obj = self.ax.get_legend()
 
-        self.ax.yaxis.grid(linestyle='dotted', zorder=0)
+        self.ax.yaxis.grid(linestyle='dotted', zorder=0, clip_on=False)
         self.ax.spines['left'].set_color('#606060')
         self.ax.spines['bottom'].set_color('#606060')
 
-        self.ax.tick_params(axis='both', direction='in', color='#606060')
+        self.ax.tick_params(axis='both', which='both', direction='in', color='#606060')
 
         if tight_layout:
             self.fig.tight_layout()
