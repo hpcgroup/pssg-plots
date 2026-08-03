@@ -115,7 +115,7 @@ class BoxPlot(Plot):
             self.ax.legend(**legend_kwargs)
         leg_obj = self.ax.get_legend()
 
-        self.ax.yaxis.grid(linestyle="dotted", zorder=0)
+        self.ax.yaxis.grid(linestyle="dotted", zorder=0, clip_on=False)
         self.ax.spines["left"].set_color("#606060")
         self.ax.spines["bottom"].set_color("#606060")
 

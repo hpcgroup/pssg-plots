@@ -121,11 +121,11 @@ class BarPlot(Plot):
         leg_obj = self.ax.get_legend()
 
 
-        self.ax.yaxis.grid(linestyle='dotted', zorder=0)
+        self.ax.yaxis.grid(linestyle='dotted', zorder=0, clip_on=False)
         self.ax.spines['left'].set_color('#606060')
         self.ax.spines['bottom'].set_color('#606060')
 
-        self.ax.tick_params(axis='both', direction='in', color='#606060')
+        self.ax.tick_params(axis='both', which='both', direction='in', color='#606060')
 
         if labels is not None:
             for p in self.ax.patches:
